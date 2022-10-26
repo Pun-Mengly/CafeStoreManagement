@@ -5,7 +5,7 @@ VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CafeStoreManagement", "CafeStoreManagement\CafeStoreManagement.csproj", "{CF6A3B0E-9D38-4961-BE70-B783C67992AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CafeStoreWeb", "CafeStoreWeb\CafeStoreWeb.csproj", "{BC6238B1-132A-4C74-8962-1D65E1345E35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CafeStoreWeb", "CafeStoreWeb\CafeStoreWeb.csproj", "{BC6238B1-132A-4C74-8962-1D65E1345E35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
