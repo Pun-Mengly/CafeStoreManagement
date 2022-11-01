@@ -10,4 +10,8 @@
     <PackageReference Include="Radzen.Blazor" Version="4.1.14" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CafeStoreManagement\CafeStoreManagement.csproj" />
+  </ItemGroup>
+
 </Project>

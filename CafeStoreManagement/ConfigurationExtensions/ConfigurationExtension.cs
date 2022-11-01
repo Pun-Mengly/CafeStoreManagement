@@ -1,11 +1,13 @@
 ﻿
 public static class ConfigurationExtension
-    {
+{
     public static IServiceCollection AddService(this IServiceCollection services)
         {
             #region Depandecy Injection
             services.AddScoped<ResponseModel>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IBusinessLogic, BusinessLogic>();
+            services.AddTransient<IPrincipal>(provider => provider.GetService<IHttpContextAccessor>()!.HttpContext!.User);
 
         #endregion
         #region Config JWT
@@ -40,7 +42,7 @@ public static class ConfigurationExtension
         //------------------Decoration swagger-------------
         services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Employee Managerment", Version = "v2" });
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "CafeStoreManagerment", Version = "v2" });
         });
         services.AddSwaggerGen(options => {
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -67,6 +69,11 @@ public static class ConfigurationExtension
         //-----------------------------------------------------------
 
         #endregion
+
+
+
+
+
         return services;
         }
-    }
+}

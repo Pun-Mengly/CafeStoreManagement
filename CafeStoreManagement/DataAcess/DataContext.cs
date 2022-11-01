@@ -2,27 +2,35 @@
 
 
 
+using CafeStoreManagement.Models;
 using Microsoft.Extensions.Options;
 
 public class DataContext : IdentityDbContext<IdentityUser> //DBContext
     {
-        DbSet<MenuGroupModel> MenuGroups;
+
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
 
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-         {
-        base.OnConfiguring(optionsBuilder);
-
-        optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=CafeStoreManagementDb;Integrated Security=True;TrustServerCertificate=True ");
+        {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=CafeStoreManagementDb;Integrated Security=True;TrustServerCertificate=True ");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-        base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-    }
+        }
+    public DbSet<MenuGroupModel> MenuGroups { get; set; }
+    public DbSet<ChannelModel> ChannelModels { get; set; }
+    public DbSet<SourceModel> SourceModels { get; set; }
+    public DbSet<TaxModel> TaxModels { get; set; }
+    public DbSet<ItemDetailModel> ItemDetailModels { get; set; }
+    public DbSet<ItemModel> ItemModels { get; set; }
+    public DbSet<CategoryModel> CategoryModels { get; set; }
+    public DbSet<SizeModel> SizeModels { get; set; }
 }
 
