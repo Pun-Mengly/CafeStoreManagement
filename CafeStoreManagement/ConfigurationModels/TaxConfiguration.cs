@@ -6,7 +6,6 @@ namespace CafeStoreManagement.ConfigurationModels
     {
         public void Configure(EntityTypeBuilder<TaxModel> builder)
         {
-
             builder.ToTable("tblTax");
             builder.Property(t => t.Code)
                     .IsRequired()
@@ -21,30 +20,7 @@ namespace CafeStoreManagement.ConfigurationModels
                    .IsRequired();
             builder.Property(t => t.IsDeleted)
                    .IsRequired();
-            builder.HasData(
-                new TaxModel()
-                {
-                    Id = Guid.NewGuid(),
-                    Code = "PLT",
-                    Name = "PLT",
-                    Percentage = 10.00,
-                    Description = CoreString.description,
-                    IsDeleted = false,
-                    CreatedBy = CoreString.user,
-                    CreatedDate = DateTime.Now,
-                },
-                new TaxModel()
-                {
-                    Id = Guid.NewGuid(),
-                    Code = "VAT",
-                    Name = "VAT",
-                    Percentage = 10.00,
-                    Description = CoreString.description,
-                    IsDeleted = false,
-                    CreatedBy = CoreString.user,
-                    CreatedDate = DateTime.Now,
-                }              
-            );
+            builder.HasIndex(t => new { t.Code, t.CreatedBy }).IsUnique();
         }
     }
 }

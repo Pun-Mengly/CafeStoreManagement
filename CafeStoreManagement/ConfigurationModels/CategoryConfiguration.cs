@@ -19,39 +19,7 @@ namespace CafeStoreManagement.ConfigurationModels
                    .HasMaxLength(300);
             builder.Property(t => t.IsDeleted)
                    .IsRequired();
-
-            builder.HasData(
-                new CategoryModel()
-                {
-                    Id = Guid.NewGuid(),
-                    Code = "SMT",
-                    Name = "Smoothie",
-                    Description = CoreString.description,
-                    IsDeleted = false,
-                    CreatedBy = CoreString.user,
-                    CreatedDate = DateTime.Now,
-                },
-                new CategoryModel()
-                {
-                    Id = Guid.NewGuid(),
-                    Code = "MIT",
-                    Name = "Milk Tea",
-                    Description = CoreString.description,
-                    IsDeleted = false,
-                    CreatedBy = CoreString.user,
-                    CreatedDate = DateTime.Now,
-                },
-                new CategoryModel()
-                {
-                    Id = Guid.NewGuid(),
-                    Code = "CAF",
-                    Name = "Coffee",
-                    Description = CoreString.description,
-                    IsDeleted = false,
-                    CreatedBy = CoreString.user,
-                    CreatedDate = DateTime.Now,
-                }
-            );
+            builder.HasIndex(t => new { t.Code, t.CreatedBy }).IsUnique();
         }
     }
 }

@@ -2,16 +2,13 @@
 
 namespace CafeStoreManagement.ConfigurationModels
 {
-    public class ItemConfiguration : IEntityTypeConfiguration<ItemModel>
+    public class ItemDetailConfiguration : IEntityTypeConfiguration<ItemDetailModel>
     {
-        public void Configure(EntityTypeBuilder<ItemModel> builder)
+        public void Configure(EntityTypeBuilder<ItemDetailModel> builder)
         {
 
-            builder.ToTable("tblItem");
-            builder.Property(t => t.Code)
-                    .IsRequired()
-                    .HasMaxLength(5);
-            builder.Property(t => t.Name)
+            builder.ToTable("tblItemDetail");
+            builder.Property(t => t.Price)
                     .IsRequired()
                     .HasMaxLength(50);
             builder.Property(t => t.Description)
@@ -19,7 +16,6 @@ namespace CafeStoreManagement.ConfigurationModels
                    .HasMaxLength(300);
             builder.Property(t => t.IsDeleted)
                    .IsRequired();
-            
         }
     }
 }

@@ -9,11 +9,9 @@ namespace CafeStoreManagement.Controllers
     public class ItemsController : ControllerBase
     {
         private readonly IBusinessLogic _logic;
-        private readonly DataContext context;
-        public ItemsController(IBusinessLogic logic, DataContext context)
+        public ItemsController(IBusinessLogic logic)
         {
             _logic = logic;
-            this.context = context;
         }        
         [HttpPost]
         public async Task<object> post([FromBody] List<ItemCommand> items)=> await _logic.PostItem(items);

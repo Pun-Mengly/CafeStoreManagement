@@ -19,31 +19,7 @@ public class MenuGroupConfiguration : IEntityTypeConfiguration<MenuGroupModel>
                .HasMaxLength(300);
         builder.Property(t => t.IsDeleted)
                .IsRequired();
-        builder.HasData(
-               new MenuGroupModel()
-               {
-                   Id = Guid.NewGuid(),
-                   Code = "DRK",
-                   Abv = "DRK",
-                   Name = "Drink",
-                   Description = CoreString.description,
-                   IsDeleted = false,
-                   CreatedBy = CoreString.user,
-                   CreatedDate = DateTime.Now,
-               },
-               new MenuGroupModel()
-               {
-                   Id = Guid.NewGuid(),
-                   Code = "FOD",
-                   Abv = "FOD",
-                   Name = "Food",
-                   Description = CoreString.description, 
-                   IsDeleted = false,
-                   CreatedBy = CoreString.user,
-                   CreatedDate = DateTime.Now,
-               }
-               
-           );
+        builder.HasIndex(t => new { t.Code, t.CreatedBy }).IsUnique();
     }
 }
 

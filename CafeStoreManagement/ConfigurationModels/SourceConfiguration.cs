@@ -22,42 +22,7 @@ namespace CafeStoreManagement.ConfigurationModels
                    .HasMaxLength(300);
             builder.Property(t => t.IsDeleted)
                    .IsRequired();
-
-            builder.HasData(
-                new SourceModel()
-                {
-                    Id=Guid.NewGuid(),
-                    Code="MBL",
-                    Abv="MBL",
-                    Name="Mobile App",
-                    Description= CoreString.description,
-                    IsDeleted=false,
-                    CreatedBy= CoreString.user,
-                    CreatedDate=DateTime.Now,
-                },
-                new SourceModel()
-                {
-                    Id = Guid.NewGuid(),
-                    Code = "FAT",
-                    Abv = "FAT",
-                    Name = "Food Aggregator",
-                    Description = CoreString.description,
-                    IsDeleted = false,
-                    CreatedBy = CoreString.user,
-                    CreatedDate = DateTime.Now,
-                },
-                new SourceModel()
-                {
-                    Id = Guid.NewGuid(),
-                    Code = "WAL",
-                    Abv = "WAL",
-                    Name = "Walk In",
-                    Description = CoreString.description,
-                    IsDeleted = false,
-                    CreatedBy = CoreString.user,
-                    CreatedDate = DateTime.Now,
-                }
-            );
+            builder.HasIndex(t => new { t.Code, t.CreatedBy }).IsUnique();
         }
     }
 }

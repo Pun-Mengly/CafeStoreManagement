@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CafeStoreManagement.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221031020758_init3")]
-    partial class init3
+    [Migration("20221102041957_init2")]
+    partial class init2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -36,7 +36,7 @@ namespace CafeStoreManagement.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -58,42 +58,10 @@ namespace CafeStoreManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblCategory", (string)null);
+                    b.HasIndex("Code", "CreatedBy")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("6b3a6e40-5392-46dd-bfee-c03bb8618076"),
-                            Code = "SMT",
-                            CreatedBy = "Default user",
-                            CreatedDate = new DateTime(2022, 10, 31, 9, 7, 57, 810, DateTimeKind.Local).AddTicks(8430),
-                            Description = "Generarted by System",
-                            IsDeleted = false,
-                            MenuGroupId = new Guid("00000000-0000-0000-0000-000000000000"),
-                            Name = "Smoothie"
-                        },
-                        new
-                        {
-                            Id = new Guid("847f2ac7-56e1-4fcb-be9d-d8bc3ef5ed21"),
-                            Code = "MIT",
-                            CreatedBy = "Default user",
-                            CreatedDate = new DateTime(2022, 10, 31, 9, 7, 57, 810, DateTimeKind.Local).AddTicks(8444),
-                            Description = "Generarted by System",
-                            IsDeleted = false,
-                            MenuGroupId = new Guid("00000000-0000-0000-0000-000000000000"),
-                            Name = "Milk Tea"
-                        },
-                        new
-                        {
-                            Id = new Guid("51b79009-adbb-470e-a76b-e152e31db02d"),
-                            Code = "CAF",
-                            CreatedBy = "Default user",
-                            CreatedDate = new DateTime(2022, 10, 31, 9, 7, 57, 810, DateTimeKind.Local).AddTicks(8446),
-                            Description = "Generarted by System",
-                            IsDeleted = false,
-                            MenuGroupId = new Guid("00000000-0000-0000-0000-000000000000"),
-                            Name = "Coffee"
-                        });
+                    b.ToTable("tblCategory", (string)null);
                 });
 
             modelBuilder.Entity("CafeStoreManagement.Models.ChannelModel", b =>
@@ -114,7 +82,7 @@ namespace CafeStoreManagement.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -133,42 +101,48 @@ namespace CafeStoreManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblChannel", (string)null);
+                    b.HasIndex("Code", "CreatedBy")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("1385cae1-efeb-46dc-a9e5-38c378297cce"),
-                            Abv = "DIN",
-                            Code = "DIN",
-                            CreatedBy = "Default user",
-                            CreatedDate = new DateTime(2022, 10, 31, 9, 7, 57, 811, DateTimeKind.Local).AddTicks(5811),
-                            Description = "Generarted by System",
-                            IsDeleted = false,
-                            Name = "Dine In"
-                        },
-                        new
-                        {
-                            Id = new Guid("20451b43-686f-4824-8fef-e45e8aef005a"),
-                            Abv = "TAK",
-                            Code = "TAK",
-                            CreatedBy = "Default user",
-                            CreatedDate = new DateTime(2022, 10, 31, 9, 7, 57, 811, DateTimeKind.Local).AddTicks(5818),
-                            Description = "Generarted by System",
-                            IsDeleted = false,
-                            Name = "Take Away"
-                        },
-                        new
-                        {
-                            Id = new Guid("55b5e379-162d-4d52-a622-77f74bbef110"),
-                            Abv = "DEL",
-                            Code = "DEL",
-                            CreatedBy = "Default user",
-                            CreatedDate = new DateTime(2022, 10, 31, 9, 7, 57, 811, DateTimeKind.Local).AddTicks(5820),
-                            Description = "Generarted by System",
-                            IsDeleted = false,
-                            Name = "Delivery"
-                        });
+                    b.ToTable("tblChannel", (string)null);
+                });
+
+            modelBuilder.Entity("CafeStoreManagement.Models.ItemDetailModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CategortId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Price")
+                        .HasMaxLength(50)
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("SizeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tblItemDetail", (string)null);
                 });
 
             modelBuilder.Entity("CafeStoreManagement.Models.ItemModel", b =>
@@ -194,7 +168,9 @@ namespace CafeStoreManagement.Migrations
                         .HasColumnType("nvarchar(300)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -223,7 +199,7 @@ namespace CafeStoreManagement.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -242,39 +218,10 @@ namespace CafeStoreManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblSize", (string)null);
+                    b.HasIndex("Code", "CreatedBy")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("148b0b36-93ea-4ef9-a397-c1dabaeec71e"),
-                            Code = "S",
-                            CreatedBy = "Default user",
-                            CreatedDate = new DateTime(2022, 10, 31, 9, 7, 57, 812, DateTimeKind.Local).AddTicks(9936),
-                            Description = "Generarted by System",
-                            IsDeleted = false,
-                            Name = "Small"
-                        },
-                        new
-                        {
-                            Id = new Guid("cd26c095-9058-4a09-9a19-08d3ee021f60"),
-                            Code = "M",
-                            CreatedBy = "Default user",
-                            CreatedDate = new DateTime(2022, 10, 31, 9, 7, 57, 812, DateTimeKind.Local).AddTicks(9943),
-                            Description = "Generarted by System",
-                            IsDeleted = false,
-                            Name = "Medium"
-                        },
-                        new
-                        {
-                            Id = new Guid("7609b709-3da6-4476-9868-8f145a398ce6"),
-                            Code = "L",
-                            CreatedBy = "Default user",
-                            CreatedDate = new DateTime(2022, 10, 31, 9, 7, 57, 812, DateTimeKind.Local).AddTicks(9953),
-                            Description = "Generarted by System",
-                            IsDeleted = false,
-                            Name = "Large"
-                        });
+                    b.ToTable("tblSize", (string)null);
                 });
 
             modelBuilder.Entity("CafeStoreManagement.Models.SourceModel", b =>
@@ -295,7 +242,7 @@ namespace CafeStoreManagement.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -314,42 +261,10 @@ namespace CafeStoreManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblSource", (string)null);
+                    b.HasIndex("Code", "CreatedBy")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("437d1652-03c5-4b52-91dc-50bf81fb8d06"),
-                            Abv = "MBL",
-                            Code = "MBL",
-                            CreatedBy = "Default user",
-                            CreatedDate = new DateTime(2022, 10, 31, 9, 7, 57, 813, DateTimeKind.Local).AddTicks(7534),
-                            Description = "Generarted by System",
-                            IsDeleted = false,
-                            Name = "Mobile App"
-                        },
-                        new
-                        {
-                            Id = new Guid("7f47571f-8974-4620-85ab-d4a35e397897"),
-                            Abv = "FAT",
-                            Code = "FAT",
-                            CreatedBy = "Default user",
-                            CreatedDate = new DateTime(2022, 10, 31, 9, 7, 57, 813, DateTimeKind.Local).AddTicks(7541),
-                            Description = "Generarted by System",
-                            IsDeleted = false,
-                            Name = "Food Aggregator"
-                        },
-                        new
-                        {
-                            Id = new Guid("f046310e-ee45-416a-bec0-a0cdcb9307cd"),
-                            Abv = "WAL",
-                            Code = "WAL",
-                            CreatedBy = "Default user",
-                            CreatedDate = new DateTime(2022, 10, 31, 9, 7, 57, 813, DateTimeKind.Local).AddTicks(7543),
-                            Description = "Generarted by System",
-                            IsDeleted = false,
-                            Name = "Walk In"
-                        });
+                    b.ToTable("tblSource", (string)null);
                 });
 
             modelBuilder.Entity("CafeStoreManagement.Models.TaxModel", b =>
@@ -365,7 +280,7 @@ namespace CafeStoreManagement.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -387,31 +302,10 @@ namespace CafeStoreManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblTax", (string)null);
+                    b.HasIndex("Code", "CreatedBy")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("2fdc304d-9995-43a0-8662-0ec3f79be58b"),
-                            Code = "PLT",
-                            CreatedBy = "Default user",
-                            CreatedDate = new DateTime(2022, 10, 31, 9, 7, 57, 814, DateTimeKind.Local).AddTicks(4476),
-                            Description = "Generarted by System",
-                            IsDeleted = false,
-                            Name = "PLT",
-                            Percentage = 10.0
-                        },
-                        new
-                        {
-                            Id = new Guid("b8757f2a-85d7-4ac3-876e-a18387a17ec4"),
-                            Code = "VAT",
-                            CreatedBy = "Default user",
-                            CreatedDate = new DateTime(2022, 10, 31, 9, 7, 57, 814, DateTimeKind.Local).AddTicks(4481),
-                            Description = "Generarted by System",
-                            IsDeleted = false,
-                            Name = "VAT",
-                            Percentage = 10.0
-                        });
+                    b.ToTable("tblTax", (string)null);
                 });
 
             modelBuilder.Entity("MenuGroupModel", b =>
@@ -427,11 +321,11 @@ namespace CafeStoreManagement.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -450,31 +344,10 @@ namespace CafeStoreManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblMenuGroup", (string)null);
+                    b.HasIndex("Code", "CreatedBy")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("3c6abf17-a529-4931-b86f-a2c930965584"),
-                            Abv = "DRK",
-                            Code = "DRK",
-                            CreatedBy = "Default user",
-                            CreatedDate = new DateTime(2022, 10, 31, 9, 7, 57, 815, DateTimeKind.Local).AddTicks(2007),
-                            Description = "Generarted by System",
-                            IsDeleted = false,
-                            Name = "Drink"
-                        },
-                        new
-                        {
-                            Id = new Guid("d2d64ba4-d3ac-4922-9027-0a965c2576a8"),
-                            Abv = "FOD",
-                            Code = "FOD",
-                            CreatedBy = "Default user",
-                            CreatedDate = new DateTime(2022, 10, 31, 9, 7, 57, 815, DateTimeKind.Local).AddTicks(2014),
-                            Description = "Generarted by System",
-                            IsDeleted = false,
-                            Name = "Food"
-                        });
+                    b.ToTable("tblMenuGroup", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
