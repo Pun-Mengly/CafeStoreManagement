@@ -1,5 +1,9 @@
-﻿@inherits LayoutComponentBase
+﻿@using CafeStoreWeb.Services.UserService
+@using System.Text.Json
+@inherits LayoutComponentBase
 @inject NavigationManager Navigation
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject HttpClient Http
 <div class="container-sm" id="divElement">
     <div class="col-12 d-flex p-3">
 
@@ -37,21 +41,33 @@
 </div>
 
 @code {
-    string userName = "admin";
-    string password = "admin";
 
+    [Inject]
+    public IUserService? user { get; set; }
     private void NavigateToCounterComponent()
     {
         Navigation.NavigateTo("counter");
     }
-    void OnLogin(LoginArgs args, string name)
+    public async Task<LoginModel> OnLogin(LoginArgs args, string name)
     {
-        if (args.Username == userName && args.Password == password)
-        {
+        var model = new LoginModel()
+            {
+                Username = args.Username,
+                Password = args.Password
+            };
 
-            Navigation.NavigateTo("");
-        }
+        var result = await Http.PostAsJsonAsync("api/Authenticate/login", model);
        
+        if(true){
+            var obj = result.Content.ReadAsStringAsync().Result;
+            string token =JsonSerializer.Deserialize<TokenModel>(obj).token;
+            await sessionStorage.SetItemAsync("Token", token);
+            var test = await sessionStorage.GetItemAsync<string>("Token");
+            Navigation.NavigateTo("counter");
+        }
+        
+        return model;
+
     }
 
 

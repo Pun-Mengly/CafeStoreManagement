@@ -1,3 +1,8 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore;
+
+WebHost.CreateDefaultBuilder(args)
+.UseUrls("http://localhost:5000");
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -17,10 +22,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.Run();

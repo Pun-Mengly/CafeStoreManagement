@@ -1,8 +1,14 @@
+using Blazored.SessionStorage;
+using CafeStoreWeb;
 using CafeStoreWeb.Data;
 using CafeStoreWeb.Services.UserService;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Radzen;
+using System.Net;
+using System.Text.Json;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +22,12 @@ builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<ContextMenuService>();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7018/") });
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddBlazoredSessionStorage();
+builder.Services.AddBlazoredSessionStorage(config =>
+        config.JsonSerializerOptions.WriteIndented = true
+    );
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

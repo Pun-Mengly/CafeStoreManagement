@@ -39,7 +39,7 @@ public class BusinessLogic : IBusinessLogic
                 await dataContext.ItemModels.AddAsync(item);
                 await dataContext.SaveChangesAsync();
             }
-            return postItems;
+            return postItems; 
         }
         catch (Exception ex)
         {
@@ -153,9 +153,9 @@ public class BusinessLogic : IBusinessLogic
                 };
                 await dataContext.ItemDetailModels.AddAsync(data);
                 await dataContext.SaveChangesAsync();
-            }
+            }   
             return postItemDetails;
-        }
+        }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
         catch (Exception ex)
         {
             throw new Exception(ex.Message);
@@ -379,6 +379,70 @@ public class BusinessLogic : IBusinessLogic
                }
         };
              dataContext.MenuGroups.AddRange(menuGroups);
+            #endregion
+
+            #region PaymentMethod
+            var paymentMethod = new List<PaymentMethodModel>
+        {
+              new PaymentMethodModel()
+               {
+                   Id =Guid.NewGuid(),
+                   Code = "Cash",
+                   Name = "Cash",
+                   Description = CoreString.description,
+                   IsDeleted = false,
+                   CreatedBy =userId,
+                   CreatedDate = DateTime.Now,
+               },
+             
+        };
+            dataContext.PaymentMethodModels.AddRange(paymentMethod);
+            #endregion
+
+            #region PromotionTypes
+            var promotionTypes = new List<PromotionTypeModel>
+        {
+              new PromotionTypeModel()
+               {
+                   Id =Guid.NewGuid(),
+                   Code = "PMT-001",
+                   TypeName = "Discount",
+                   Description = CoreString.description,
+                   IsDeleted = false,
+                   CreatedBy =userId,
+                   CreatedDate = DateTime.Now,
+               },
+                new PromotionTypeModel()
+               {
+                   Id =Guid.NewGuid(),
+                   Code = "PMT-002",
+                   TypeName = "Givaway",
+                   Description = CoreString.description,
+                   IsDeleted = false,
+                   CreatedBy =userId,
+                   CreatedDate = DateTime.Now,
+               },
+                new PromotionTypeModel()
+               {
+                   Id =Guid.NewGuid(),
+                   Code = "PMT-003",
+                   TypeName = "PaymentMethod",
+                   Description = CoreString.description,
+                   IsDeleted = false,
+                   CreatedBy =userId,
+                   CreatedDate = DateTime.Now,
+               },
+
+
+        };
+            dataContext.PromotionTypeModels.AddRange(promotionTypes);
+
+
+            #endregion
+
+            #region Promotion
+
+
             #endregion
 
             dataContext.SaveChanges();

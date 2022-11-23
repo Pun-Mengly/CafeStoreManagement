@@ -1,28 +1,60 @@
-﻿@page "/"
-<h3>Bootstrap Alert Example</h3>
+﻿@page "/home";
+@using CafeStoreManagement.Features.ItemDetail.Response
+@using CafeStoreManagement.Models
+@using System.Net.Http.Headers
+@using System.Text.Json
+@using CafeStoreWeb.Services.UserService
+@inject HttpClient Http
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
-<div>
-    <button @onclick="@DoSomthing">Show/Hide</button>
-</div>
 
-<div class="alert alert-primary @HideAlert" role="alert">
-    @AlertContent
+<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1" Class="my-4">
+    DataGrid <strong>Pager Position</strong>
+</RadzenText>
+
+<div style="display: flex; align-items: center; margin-bottom: 16px">
+    <div style="white-space:nowrap; margin-right: 16px">Pager Position:</div>
+    <RadzenDropDown @bind-Value="@pagerPosition" TextProperty="Text" ValueProperty="Value"
+                    Data="@(Enum.GetValues(typeof(PagerPosition)).Cast<PagerPosition>().Select(t => new { Text = $"{t}", Value = t }))" />
 </div>
+<RadzenDataGrid Data="@orderDetails" TItem="ItemDetailResponse" PagerPosition="@pagerPosition" AllowPaging="true" AllowSorting="true">
+    <Columns>
+        <RadzenDataGridColumn TItem="ItemDetailResponse" Property="OrderID" Title="OrderID" />
+        <RadzenDataGridColumn TItem="ItemDetailResponse" Property="ProductID" Title="ProductID" />
+        <RadzenDataGridColumn TItem="ItemDetailResponse" Property="Price" Title="Unit Price">
+            <Template Context="detail">
+                @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", detail.Price)
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="ItemDetailResponse" Property="Quantity" Title="Quantity" />
+        
+   
+    </Columns>
+</RadzenDataGrid>
 
 @code {
-    private string HideAlert { get; set; } = "d-none";
-    private string AlertContent { get; set; } = "This is a primary alert—check it out!";
-    private void DoSomthing()
+    PagerPosition pagerPosition = PagerPosition.Bottom;
+    List<ItemDetailResponse> orderDetails;
+
+    protected override async Task OnInitializedAsync()
     {
-        if (HideAlert == "")
+        await base.OnInitializedAsync();
+        var request = new HttpRequestMessage(HttpMethod.Get, "api/ItemDetail");
+        var token = sessionStorage.GetItemAsync<string>("Token");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
+        var respone =await Http.SendAsync(request);
+        var body = respone.Content.ReadAsStringAsync();
+        string result = body.Result;
+        //var res = JsonSerializer.Deserialize<List<ItemDetailResponse>>(result);
+        var dynamicObject = JsonSerializer.Deserialize<dynamic>(result, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+        //var value = JsonConvert.DeserializeObject<ItemDetailResponse>(result);
+        foreach (var item in dynamicObject)
         {
-            HideAlert = "d-none";
-            AlertContent = "This is a primary alert—check it out!";
+            var aa = item["id"];
         }
-        else
-        {
-            HideAlert = "";
-            AlertContent = "Hello World";
-        }
+        
+
+        //var token = await sessionStorage.GetItemAsync<string>("SessionUser");
+
     }
- }
+}
