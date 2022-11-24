@@ -3,6 +3,7 @@
     public class ItemDetailResponse
     {
         public Guid Id { get; set; }
+        public int No { get; set; }
         public string ItemName { get; set; }
         public string itemCode { get; set; }
         public string Size { get; set; }

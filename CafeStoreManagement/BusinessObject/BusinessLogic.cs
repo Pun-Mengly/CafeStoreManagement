@@ -381,64 +381,64 @@ public class BusinessLogic : IBusinessLogic
              dataContext.MenuGroups.AddRange(menuGroups);
             #endregion
 
-            #region PaymentMethod
-            var paymentMethod = new List<PaymentMethodModel>
-        {
-              new PaymentMethodModel()
-               {
-                   Id =Guid.NewGuid(),
-                   Code = "Cash",
-                   Name = "Cash",
-                   Description = CoreString.description,
-                   IsDeleted = false,
-                   CreatedBy =userId,
-                   CreatedDate = DateTime.Now,
-               },
+        //    #region PaymentMethod
+        //    var paymentMethod = new List<PaymentMethodModel>
+        //{
+        //      new PaymentMethodModel()
+        //       {
+        //           Id =Guid.NewGuid(),
+        //           Code = "Cash",
+        //           Name = "Cash",
+        //           Description = CoreString.description,
+        //           IsDeleted = false,
+        //           CreatedBy =userId,
+        //           CreatedDate = DateTime.Now,
+        //       },
              
-        };
-            dataContext.PaymentMethodModels.AddRange(paymentMethod);
-            #endregion
+        //};
+        //    dataContext.PaymentMethodModels.AddRange(paymentMethod);
+        //    #endregion
 
-            #region PromotionTypes
-            var promotionTypes = new List<PromotionTypeModel>
-        {
-              new PromotionTypeModel()
-               {
-                   Id =Guid.NewGuid(),
-                   Code = "PMT-001",
-                   TypeName = "Discount",
-                   Description = CoreString.description,
-                   IsDeleted = false,
-                   CreatedBy =userId,
-                   CreatedDate = DateTime.Now,
-               },
-                new PromotionTypeModel()
-               {
-                   Id =Guid.NewGuid(),
-                   Code = "PMT-002",
-                   TypeName = "Givaway",
-                   Description = CoreString.description,
-                   IsDeleted = false,
-                   CreatedBy =userId,
-                   CreatedDate = DateTime.Now,
-               },
-                new PromotionTypeModel()
-               {
-                   Id =Guid.NewGuid(),
-                   Code = "PMT-003",
-                   TypeName = "PaymentMethod",
-                   Description = CoreString.description,
-                   IsDeleted = false,
-                   CreatedBy =userId,
-                   CreatedDate = DateTime.Now,
-               },
-
-
-        };
-            dataContext.PromotionTypeModels.AddRange(promotionTypes);
+        //    #region PromotionTypes
+        //    var promotionTypes = new List<PromotionTypeModel>
+        //{
+        //      new PromotionTypeModel()
+        //       {
+        //           Id =Guid.NewGuid(),
+        //           Code = "PMT-001",
+        //           TypeName = "Discount",
+        //           Description = CoreString.description,
+        //           IsDeleted = false,
+        //           CreatedBy =userId,
+        //           CreatedDate = DateTime.Now,
+        //       },
+        //        new PromotionTypeModel()
+        //       {
+        //           Id =Guid.NewGuid(),
+        //           Code = "PMT-002",
+        //           TypeName = "Givaway",
+        //           Description = CoreString.description,
+        //           IsDeleted = false,
+        //           CreatedBy =userId,
+        //           CreatedDate = DateTime.Now,
+        //       },
+        //        new PromotionTypeModel()
+        //       {
+        //           Id =Guid.NewGuid(),
+        //           Code = "PMT-003",
+        //           TypeName = "PaymentMethod",
+        //           Description = CoreString.description,
+        //           IsDeleted = false,
+        //           CreatedBy =userId,
+        //           CreatedDate = DateTime.Now,
+        //       },
 
 
-            #endregion
+        //};
+        //    dataContext.PromotionTypeModels.AddRange(promotionTypes);
+
+
+        //    #endregion
 
             #region Promotion
 
@@ -457,10 +457,11 @@ public class BusinessLogic : IBusinessLogic
     public async Task<List<ItemDetailResponse>> GetItemDetail()
     {
         var itemDetailResponses = new List<ItemDetailResponse>();
-        var itemDetails =await dataContext.ItemDetailModels.ToListAsync();
+        var itemDetails =await dataContext.ItemDetailModels.Where(e=>e.IsDeleted==false &&e.CreatedBy==userId).ToListAsync();
         var items = await dataContext.ItemModels.ToListAsync();
         var sizes = await dataContext.SizeModels.ToListAsync();
         var categories = await dataContext.CategoryModels.ToListAsync();
+        int i = 1;
         foreach (var itemDetail in itemDetails)
         {
             var item = items.Where(e => e.Id == itemDetail.ItemId && e.CreatedBy==itemDetail.CreatedBy).FirstOrDefault();
@@ -468,6 +469,7 @@ public class BusinessLogic : IBusinessLogic
             var category = categories.Where(e => e.Id == itemDetail.CategortId && e.CreatedBy == itemDetail.CreatedBy).FirstOrDefault();
             var itemDetailResponse = new ItemDetailResponse()
             {
+                No=i++,
                 Id=itemDetail.Id,
                 itemCode= item!.Code,
                 ItemName=item!.Name,
@@ -499,5 +501,73 @@ public class BusinessLogic : IBusinessLogic
             throw new Exception(ex.Message);
         }
             
+    }
+
+    public async Task<List<SizeModel>> GetAllSizes()
+    {
+        try
+        {
+            var result =await  dataContext.SizeModels.Where(e => e.IsDeleted == false && e.CreatedBy == userId).ToListAsync();
+            return result;
+        }
+        catch(Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<List<CategoryModel>> GetAllCategories()
+    {
+        try
+        {
+            var result = await dataContext.CategoryModels.Where(e => e.IsDeleted == false && e.CreatedBy == userId).ToListAsync();
+            return result;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<List<ItemModel>> GetAllItems()
+    {
+        try
+        {
+            var result = await dataContext.ItemModels.Where(e => e.IsDeleted == false && e.CreatedBy == userId).ToListAsync();
+            return result;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<ItemDetailCommand> UpdateItemDetail(ItemDetailCommand itemDetail)
+    {
+        try
+        {
+            var items = await dataContext.ItemModels.ToListAsync();
+            var sizes = await dataContext.SizeModels.ToListAsync();
+            var categories = await dataContext.CategoryModels.ToListAsync();
+
+            var item = items.Where(e => e.Name == itemDetail.ItemName && e.CreatedBy == userId).FirstOrDefault();
+            var size = sizes.Where(e => e.Name == itemDetail.Size && e.CreatedBy == userId).FirstOrDefault();
+            var category = categories.Where(e => e.Name == itemDetail.Category && e.CreatedBy == userId).FirstOrDefault();
+
+            var result =await dataContext.ItemDetailModels.Where(e => e.Id == itemDetail.Id && e.CreatedBy==userId).FirstOrDefaultAsync();
+            result!.ItemId = item!.Id;
+            result!.CategortId = category!.Id;
+            result!.SizeId = size!.Id;
+            result!.Price=itemDetail.Price;
+            result!.Description = itemDetail.Decription;
+            dataContext.ItemDetailModels.Update(result);
+            await dataContext.SaveChangesAsync();
+            return itemDetail;
+            
+        }
+        catch(Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 }

@@ -7,7 +7,7 @@ namespace CafeStoreManagement.ConfigurationModels
         public void Configure(EntityTypeBuilder<PaymentMethodModel> builder)
         {
 
-            builder.ToTable("tbPaymentMethod");
+            builder.ToTable("tblPaymentMethod");
             builder.Property(t => t.Code)
                     .IsRequired()
                     .HasMaxLength(5);

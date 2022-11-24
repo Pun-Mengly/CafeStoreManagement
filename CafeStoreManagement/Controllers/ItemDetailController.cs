@@ -20,8 +20,9 @@ namespace CafeStoreManagement.Controllers
         public async Task<List<ItemDetailCommand>> post([FromBody] List<ItemDetailCommand> items) => await _logic.PostItemDetail(items);
         [HttpGet]
         public async Task<IEnumerable<ItemDetailResponse>> get()=> await _logic.GetItemDetail();
-                                                                 
-                                                                 
+
+        [HttpPut]
+        public async Task<ItemDetailCommand> put([FromBody] ItemDetailCommand items) => await _logic.UpdateItemDetail(items);
 
         [HttpDelete]
         public async Task<Guid> delete(Guid id, bool isDeleted) => await _logic.DeleteItemDetail(id,isDeleted);

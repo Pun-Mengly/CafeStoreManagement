@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
-
-<PageTitle>CafeStoreWeb</PageTitle>
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject NavigationManager _navigationManager
+<PageTitle>FABEX</PageTitle>
 
 <div class="page">
     <div class="sidebar">
@@ -9,7 +10,7 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="login" target="_blank">Log out</a>
+            <a href="" @onclick="@Logout" target="_blank">Log out</a>
         </div>
 
         <article class="content px-4">
@@ -21,3 +22,9 @@
 <RadzenNotification />
 <RadzenContextMenu />
 <RadzenTooltip />
+@code{
+    async void Logout(){
+        await sessionStorage.ClearAsync();
+        _navigationManager.NavigateTo("/", true);
+    }
+}

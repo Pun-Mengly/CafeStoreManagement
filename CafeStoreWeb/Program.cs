@@ -25,7 +25,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddBlazoredSessionStorage(config =>
-        config.JsonSerializerOptions.WriteIndented = true
+        config.JsonSerializerOptions.WriteIndented = false
     );
 
 var app = builder.Build();
@@ -38,7 +38,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 

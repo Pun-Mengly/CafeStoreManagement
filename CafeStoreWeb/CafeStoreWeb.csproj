@@ -8,11 +8,16 @@
 
   <ItemGroup>
     <PackageReference Include="Blazored.SessionStorage" Version="2.2.0" />
-    <PackageReference Include="Radzen.Blazor" Version="4.1.14" />
+    <PackageReference Include="ClosedXML.Report" Version="0.2.4" />
+    <PackageReference Include="Radzen.Blazor" Version="4.3.7" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CafeStoreManagement\CafeStoreManagement.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Excells\" />
   </ItemGroup>
 
 </Project>
