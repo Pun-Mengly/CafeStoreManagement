@@ -6,7 +6,7 @@
 @using System.Text.Json;
 @using ClosedXML.Excel
 @inject HttpClient Http
-@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject Blazored.LocalStorage.ILocalStorageService sessionStorage
 @inject DialogService DialogService
 @inject NavigationManager _navigationManager
 
@@ -53,7 +53,7 @@
 
 @code {
     //string token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiTWVuZ2x5IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIxZDZiNzI0MC1hMTExLTRiMGMtYTBkYS1lOTg3MTU0ZDk5MDciLCJqdGkiOiIzYTdlMmUxZC03MTBkLTQ4YjctYTk0OS1jNzVkNzg2Mzc1ZjAiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOlsiQWRtaW4iLCJVc2VyIl0sImV4cCI6MTY2OTMwNzM1OSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDAwLyIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTAwMS8ifQ.v2-okl25M7oS0NM2WyYE4Zg2scSNMMGXW4_5q0bopIg";
-    string token = "";
+    string token;
     PagerPosition pagerPosition = PagerPosition.Bottom;
     List<ItemDetailResponse> orderDetails;
     List<SizeModel> sizes;
@@ -68,39 +68,38 @@
     IList<ItemDetailResponse>? slectedItem;
     List<string> endpoints = new List<string>() { "api/ItemDetail", "api/sizes", "api/categories", "api/Items" };
 
-    //protected override async Task OnAfterRenderAsync(bool firstRender)
-    //{
-    //     token = await sessionStorage.GetItemAsStringAsync("Token");
-    //}
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await base.OnInitializedAsync();
-        token = await sessionStorage.GetItemAsStringAsync("Token");
-        foreach (var endpoint in endpoints)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, endpoint);
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var respone = await Http.SendAsync(request);
-            var body = respone.Content.ReadAsStringAsync();
-            string result = body.Result;
-            if(endpoint==endpoints[0]){
-                orderDetails = JsonSerializer.Deserialize<List<ItemDetailResponse>>(result, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
-            }
-            if (endpoint == endpoints[1])
+        if(firstRender){
+            //  
+            token =  await sessionStorage.GetItemAsync<string>("Token");
+            foreach (var endpoint in endpoints)
             {
-                sizes = JsonSerializer.Deserialize<List<SizeModel>>(result, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+                var request = new HttpRequestMessage(HttpMethod.Get, endpoint);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var respone = await Http.SendAsync(request);
+                var body = respone.Content.ReadAsStringAsync();
+                string result = body.Result;
+                if(endpoint==endpoints[0]){
+                    orderDetails = JsonSerializer.Deserialize<List<ItemDetailResponse>>(result, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+                }
+                if (endpoint == endpoints[1])
+                {
+                    sizes = JsonSerializer.Deserialize<List<SizeModel>>(result, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+                }
+                if (endpoint == endpoints[2])
+                {
+                    categories = JsonSerializer.Deserialize<List<CategoryModel>>(result, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+                }
+                if (endpoint == endpoints[3])
+                {
+                    items = JsonSerializer.Deserialize<List<ItemResponse>>(result, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+                }
             }
-            if (endpoint == endpoints[2])
-            {
-                categories = JsonSerializer.Deserialize<List<CategoryModel>>(result, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
-            }
-            if (endpoint == endpoints[3])
-            {
-                items = JsonSerializer.Deserialize<List<ItemResponse>>(result, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
-            }
+            slectedItem = orderDetails.Take(1).ToList();
+
         }
-        slectedItem = orderDetails.Take(1).ToList();
-       
+        StateHasChanged();
     }
     public void  OnClick(string buttonName)
     {
@@ -294,13 +293,14 @@
             var ws = wb.Worksheets.Add("Item Menu");
             
 
-            ws.Cell(1, 1).Value = "Code";
+            ws.Cell(1, 1).Value = "No";
             ws.Cell(1, 2).Value = "Code";
-            ws.Cell(1, 4).Value = "Name";
-            ws.Cell(1, 5).Value = "Size";
-            ws.Cell(1, 6).Value = "Category";
-            ws.Cell(1, 7).Value = "Price";
-            ws.Cell(1, 8).Value = "Description";
+            ws.Cell(1, 3).Value = "Name";
+            ws.Cell(1, 4).Value = "Size";
+            ws.Cell(1, 5).Value = "Category";
+            ws.Cell(1, 6).Value = "Price";
+            ws.Cell(1, 7).Value = "Description";
+            ws.Cell(1, 8).Value = "CreatedDate";
 
             for (int row = 0; row < orderDetails.Count; row++)
             {
@@ -309,8 +309,9 @@
                 ws.Cell(row + 2, 3).Value = orderDetails[row].ItemName;
                 ws.Cell(row + 2, 4).Value = orderDetails[row].Size;
                 ws.Cell(row + 2, 5).Value = orderDetails[row].Category;
-                ws.Cell(row + 2, 7).Value = orderDetails[row].Price;
+                ws.Cell(row + 2, 6).Value = orderDetails[row].Price;
                 ws.Cell(row + 2, 7).Value = orderDetails[row].Decription;
+                ws.Cell(row + 2, 8).Value = orderDetails[row].CreatedDate;
             }
 
             wb.SaveAs($@"Excells\Item Menu {DateTime.Now.ToString("dddd, dd MMMM yyyy")}.{type}");

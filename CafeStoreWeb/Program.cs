@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using Blazored.SessionStorage;
 using CafeStoreWeb;
 using CafeStoreWeb.Data;
@@ -23,10 +24,11 @@ builder.Services.AddScoped<ContextMenuService>();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7018/") });
 builder.Services.AddScoped<IUserService, UserService>();
 
-builder.Services.AddBlazoredSessionStorage();
-builder.Services.AddBlazoredSessionStorage(config =>
-        config.JsonSerializerOptions.WriteIndented = false
-    );
+//builder.Services.AddBlazoredSessionStorage();
+//builder.Services.AddBlazoredSessionStorage(config =>
+//        config.JsonSerializerOptions.WriteIndented = false
+//    );
+builder.Services.AddBlazoredLocalStorage();
 
 var app = builder.Build();
 
