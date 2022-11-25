@@ -52,10 +52,12 @@ public class BusinessLogic : IBusinessLogic
         {
             var results = await dataContext.ItemModels.Where(e => e.CreatedBy == userId).ToListAsync();
             var items = new List<ItemResponse>();
+            int i = 1;
             foreach (var result in results)
             {
                 var data = new ItemResponse()
                 {
+                    No = i++,
                     Id = result.Id,
                     Code = result.Code,
                     Name = result.Name,
@@ -235,6 +237,28 @@ public class BusinessLogic : IBusinessLogic
                     MenuGroupId= groupId1,
                     Code = "CAF",
                     Name = "Coffee",
+                    Description = CoreString.description,
+                    IsDeleted = false,
+                    CreatedBy = userId,
+                    CreatedDate = DateTime.Now,
+                },
+                new CategoryModel()
+                {
+                    Id = Guid.NewGuid(),
+                    MenuGroupId= groupId2,
+                    Code = "RIC",
+                    Name = "Rice",
+                    Description = CoreString.description,
+                    IsDeleted = false,
+                    CreatedBy = userId,
+                    CreatedDate = DateTime.Now,
+                },
+                new CategoryModel()
+                {
+                    Id = Guid.NewGuid(),
+                    MenuGroupId= groupId2,
+                    Code = "SNK",
+                    Name = "Snack",
                     Description = CoreString.description,
                     IsDeleted = false,
                     CreatedBy = userId,
@@ -555,11 +579,11 @@ public class BusinessLogic : IBusinessLogic
             var category = categories.Where(e => e.Name == itemDetail.Category && e.CreatedBy == userId).FirstOrDefault();
 
             var result =await dataContext.ItemDetailModels.Where(e => e.Id == itemDetail.Id && e.CreatedBy==userId).FirstOrDefaultAsync();
-            result!.ItemId = item!.Id;
-            result!.CategortId = category!.Id;
-            result!.SizeId = size!.Id;
-            result!.Price=itemDetail.Price;
-            result!.Description = itemDetail.Decription;
+            result!.ItemId = item == null ? result!.ItemId : item!.Id;
+            result!.CategortId = category == null ? result!.CategortId : category!.Id;
+            result!.SizeId = size == null ? result!.SizeId : size!.Id;
+            result!.Price = itemDetail.Price == 0 ? result!.Price : itemDetail.Price;
+            result!.Description = itemDetail.Decription == null ? result!.Description : itemDetail.Decription!;
             dataContext.ItemDetailModels.Update(result);
             await dataContext.SaveChangesAsync();
             return itemDetail;

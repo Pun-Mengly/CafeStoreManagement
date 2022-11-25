@@ -10,10 +10,11 @@
 @inject DialogService DialogService
 @inject NavigationManager _navigationManager
 
+@*<img src="images/cafe.jpg" asp-append-version="true" />*@
 
 <RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1" Class="my-4 rz-shadow-0 rz-border-radius-2 p-3"
             style="background: var(--rz-primary-light) no-repeat 100% 70% fixed url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwNCIgaGVpZ2h0PSIxNDU4IiB2aWV3Qm94PSIwIDAgMTIwNCAxNDU4IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8ZyBvcGFjaXR5PSIwLjUiIGZpbHRlcj0idXJsKCNmaWx0ZXIwX2ZfNDkzXzEwMTM0KSI+CjxjaXJjbGUgY3g9IjcyMi4xMjgiIGN5PSI4MzkuMDIiIHI9IjQ4MS40MTkiIGZpbGw9InVybCgjcGFpbnQwX3JhZGlhbF80OTNfMTAxMzQpIi8+CjwvZz4KPGcgb3BhY2l0eT0iMC41IiBmaWx0ZXI9InVybCgjZmlsdGVyMV9mXzQ5M18xMDEzNCkiPgo8Y2lyY2xlIGN4PSI0NzAuMzMzIiBjeT0iNTcwLjMzMyIgcj0iNDcwLjMzMyIgZmlsbD0idXJsKCNwYWludDFfcmFkaWFsXzQ5M18xMDEzNCkiLz4KPC9nPgo8ZyBvcGFjaXR5PSIwLjUiIGZpbHRlcj0idXJsKCNmaWx0ZXIyX2ZfNDkzXzEwMTM0KSI+CjxjaXJjbGUgY3g9IjY5MS41MTEiIGN5PSI1MjIuMjk3IiByPSIzMzEuNTAzIiBmaWxsPSJ1cmwoI3BhaW50Ml9yYWRpYWxfNDkzXzEwMTM0KSIvPgo8L2c+CjxnIG9wYWNpdHk9IjAuNSIgZmlsdGVyPSJ1cmwoI2ZpbHRlcjNfZl80OTNfMTAxMzQpIj4KPGNpcmNsZSBjeD0iNjA4LjI0NCIgY3k9IjEwNzkuOTciIHI9IjMzMS41MDMiIHRyYW5zZm9ybT0icm90YXRlKC04MS4yMjQ0IDYwOC4yNDQgMTA3OS45NykiIGZpbGw9InVybCgjcGFpbnQzX3JhZGlhbF80OTNfMTAxMzQpIi8+CjwvZz4KPGRlZnM+CjxmaWx0ZXIgaWQ9ImZpbHRlcjBfZl80OTNfMTAxMzQiIHg9IjE0MC43MDkiIHk9IjI1Ny42MDEiIHdpZHRoPSIxMTYyLjg0IiBoZWlnaHQ9IjExNjIuODQiIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj4KPGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz4KPGZlQmxlbmQgbW9kZT0ibm9ybWFsIiBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJCYWNrZ3JvdW5kSW1hZ2VGaXgiIHJlc3VsdD0ic2hhcGUiLz4KPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iNTAiIHJlc3VsdD0iZWZmZWN0MV9mb3JlZ3JvdW5kQmx1cl80OTNfMTAxMzQiLz4KPC9maWx0ZXI+CjxmaWx0ZXIgaWQ9ImZpbHRlcjFfZl80OTNfMTAxMzQiIHg9Ii0xMDAiIHk9IjAiIHdpZHRoPSIxMTQwLjY3IiBoZWlnaHQ9IjExNDAuNjciIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj4KPGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz4KPGZlQmxlbmQgbW9kZT0ibm9ybWFsIiBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJCYWNrZ3JvdW5kSW1hZ2VGaXgiIHJlc3VsdD0ic2hhcGUiLz4KPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iNTAiIHJlc3VsdD0iZWZmZWN0MV9mb3JlZ3JvdW5kQmx1cl80OTNfMTAxMzQiLz4KPC9maWx0ZXI+CjxmaWx0ZXIgaWQ9ImZpbHRlcjJfZl80OTNfMTAxMzQiIHg9IjI2MC4wMDgiIHk9IjkwLjc5MzkiIHdpZHRoPSI4NjMuMDA2IiBoZWlnaHQ9Ijg2My4wMDYiIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj4KPGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz4KPGZlQmxlbmQgbW9kZT0ibm9ybWFsIiBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJCYWNrZ3JvdW5kSW1hZ2VGaXgiIHJlc3VsdD0ic2hhcGUiLz4KPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iNTAiIHJlc3VsdD0iZWZmZWN0MV9mb3JlZ3JvdW5kQmx1cl80OTNfMTAxMzQiLz4KPC9maWx0ZXI+CjxmaWx0ZXIgaWQ9ImZpbHRlcjNfZl80OTNfMTAxMzQiIHg9IjE3Ni42OTQiIHk9IjY0OC40MjMiIHdpZHRoPSI4NjMuMSIgaGVpZ2h0PSI4NjMuMSIgZmlsdGVyVW5pdHM9InVzZXJTcGFjZU9uVXNlIiBjb2xvci1pbnRlcnBvbGF0aW9uLWZpbHRlcnM9InNSR0IiPgo8ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPgo8ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPgo8ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSI1MCIgcmVzdWx0PSJlZmZlY3QxX2ZvcmVncm91bmRCbHVyXzQ5M18xMDEzNCIvPgo8L2ZpbHRlcj4KPHJhZGlhbEdyYWRpZW50IGlkPSJwYWludDBfcmFkaWFsXzQ5M18xMDEzNCIgY3g9IjAiIGN5PSIwIiByPSIxIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSg3MjIuMTI4IDgzOS4wMikgcm90YXRlKDkwKSBzY2FsZSg0ODEuNDE5KSI+CjxzdG9wIHN0b3AtY29sb3I9IiNGRjFBNkMiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRkYxQTZDIiBzdG9wLW9wYWNpdHk9IjAiLz4KPC9yYWRpYWxHcmFkaWVudD4KPHJhZGlhbEdyYWRpZW50IGlkPSJwYWludDFfcmFkaWFsXzQ5M18xMDEzNCIgY3g9IjAiIGN5PSIwIiByPSIxIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSg0NzAuMzMzIDU3MC4zMzMpIHJvdGF0ZSg5MCkgc2NhbGUoNDcwLjMzMykiPgo8c3RvcCBzdG9wLWNvbG9yPSIjM0FBQ0ZGIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzNBOTVGRiIgc3RvcC1vcGFjaXR5PSIwIi8+CjwvcmFkaWFsR3JhZGllbnQ+CjxyYWRpYWxHcmFkaWVudCBpZD0icGFpbnQyX3JhZGlhbF80OTNfMTAxMzQiIGN4PSIwIiBjeT0iMCIgcj0iMSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiIGdyYWRpZW50VHJhbnNmb3JtPSJ0cmFuc2xhdGUoNjkxLjUxMSA1MjIuMjk3KSByb3RhdGUoOTApIHNjYWxlKDMzMS41MDMpIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzQ4M0FGRiIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM0ODNBRkYiIHN0b3Atb3BhY2l0eT0iMCIvPgo8L3JhZGlhbEdyYWRpZW50Pgo8cmFkaWFsR3JhZGllbnQgaWQ9InBhaW50M19yYWRpYWxfNDkzXzEwMTM0IiBjeD0iMCIgY3k9IjAiIHI9IjEiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiBncmFkaWVudFRyYW5zZm9ybT0idHJhbnNsYXRlKDYwOC4yNDQgMTA3OS45Nykgcm90YXRlKDkwKSBzY2FsZSgzMzEuNTAzKSI+CjxzdG9wIHN0b3AtY29sb3I9IiNGRkM4M0EiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRkZDODNBIiBzdG9wLW9wYWNpdHk9IjAiLz4KPC9yYWRpYWxHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K')">
-     <strong style="color:whitesmoke">Item Menu</strong>
+     <strong style="color:whitesmoke">Item Detail Menu</strong>
 </RadzenText>
 <RadzenButton Text="Export XLS" Icon="grid_on" Click="@(args => Export("xlsx"))" Class="mb-4 me-2" />
 
@@ -21,9 +22,15 @@
 <RadzenDataGrid  Data="@orderDetails" TItem="ItemDetailResponse" PagerPosition="@pagerPosition" AllowPaging="true"
                 AllowSorting="true" AllowFiltering="true" 
                 SelectionMode="DataGridSelectionMode.Single" 
-                @bind-Value=@slectedItem>
+                @bind-Value=@slectedItem CellClick="@OnCellClick">
     <Columns>
-        <RadzenDataGridColumn TItem="ItemDetailResponse" Property="No" Title="No" />
+        
+        <RadzenDataGridColumn Width="70px" TItem="ItemDetailResponse" Property="No" Title="No" Filterable="false" />
+        <RadzenDataGridColumn  Sortable="false" Filterable="false" Width="100px" TextAlign="TextAlign.Center" TItem="ItemDetailResponse" Property="Photo" Title="Photo">
+            <Template Context="data">
+                <RadzenImage Path="@data.Photo" class="rz-gravatar" />
+            </Template>
+        </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="ItemDetailResponse" Property="itemCode" Title="Code" />
         <RadzenDataGridColumn TItem="ItemDetailResponse" Property="ItemName" Title="Name" />
         <RadzenDataGridColumn TItem="ItemDetailResponse" Property="Size" Title="Size" />
@@ -34,12 +41,12 @@
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="ItemDetailResponse" Property="Decription" Title="Description" />
         <RadzenDataGridColumn TItem="ItemDetailResponse" Property="CreatedDate" Title="Created Date" />
-       <RadzenDataGridColumn TItem="ItemDetailResponse" Property="" Title="Action">
+       <RadzenDataGridColumn TItem="ItemDetailResponse" Property="" Title="Action" Filterable=false Sortable=false>
             <Template Context="data" >
-                <RadzenButton Click=@(args => ShowBusyDialogViewDetail(@slectedItem![0].ItemName,@slectedItem[0].Category,@slectedItem[0].Size,@slectedItem[0].Price.ToString(),@slectedItem[0].Decription)) 
-                                Icon="check_circle" ButtonStyle="ButtonStyle.Primary" />
-                <RadzenButton Click=@(args => ShowBusyDialogUpdate(@slectedItem![0].ItemName,@slectedItem[0].Category,@slectedItem[0].Size,@slectedItem[0].Price,@slectedItem[0].Decription)) 
-                                Icon="report" ButtonStyle="ButtonStyle.Warning" />
+                <RadzenButton Click=@(args => ShowBusyDialogViewDetail(@slectedItem![0].ItemName,@slectedItem[0].Category,@slectedItem[0].Size,@slectedItem[0].Price.ToString(),@slectedItem[0].Decription,@slectedItem[0].Photo))
+                              Icon="check_circle" ButtonStyle="ButtonStyle.Primary" />
+                <RadzenButton Click=@(args => ShowBusyDialogUpdate(@slectedItem![0].ItemName,@slectedItem[0].Category,@slectedItem[0].Size,@slectedItem[0].Price,@slectedItem[0].Decription))
+                              Icon="report" ButtonStyle="ButtonStyle.Warning" />
                 <RadzenButton Click="@(args => ConfirmDelete(slectedItem![0].Id,slectedItem![0].ItemName))" @onclick:stopPropagation="true"
                               Icon="remove_circle_outline" ButtonStyle="ButtonStyle.Danger" />
 
@@ -52,6 +59,9 @@
 </RadzenDataGrid>
 
 @code {
+    string fileName;
+    long? fileSize;
+    string images = "images/";
     //string token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiTWVuZ2x5IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIxZDZiNzI0MC1hMTExLTRiMGMtYTBkYS1lOTg3MTU0ZDk5MDciLCJqdGkiOiIzYTdlMmUxZC03MTBkLTQ4YjctYTk0OS1jNzVkNzg2Mzc1ZjAiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOlsiQWRtaW4iLCJVc2VyIl0sImV4cCI6MTY2OTMwNzM1OSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDAwLyIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTAwMS8ifQ.v2-okl25M7oS0NM2WyYE4Zg2scSNMMGXW4_5q0bopIg";
     string token;
     PagerPosition pagerPosition = PagerPosition.Bottom;
@@ -109,37 +119,38 @@
     {
         await DialogService.OpenAsync("Create New Item", d=>
     @<div>
-                <div >
-                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Item</RadzenText>
-                    <RadzenDropDown  TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
+            
+                        <div >
+                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Item</RadzenText>
+                            <RadzenDropDown  TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
                         Placeholder="Select Item..." Data=@items TextProperty="name" ValueProperty="name" Change=@(args => OnChangeItemName(args,"DropDown with placeholder")) />
-                </div>
-                <br>
-                <div >
-                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Category</RadzenText>
-                <RadzenDropDown  TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
+                        </div>
+                        <br>
+                        <div >
+                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Category</RadzenText>
+                        <RadzenDropDown  TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
                         Placeholder="Select Category..." Data=@categories TextProperty="name" ValueProperty="name" Change=@(args => OnChangeCategoryName(args,"DropDown with placeholder")) />
-                </div>
-                <br>
-                <div >
-                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Size</RadzenText>
-                <RadzenDropDown  TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
+                        </div>
+                        <br>
+                        <div >
+                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Size</RadzenText>
+                        <RadzenDropDown  TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
                         Placeholder="Select Size..." Data=@sizes TextProperty="name" ValueProperty="name" Change=@(args =>   OnChangesizeName(args,"DropDown with placeholder")) />
-                </div>
-                <br>
-                <div >
-                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Price</RadzenText>
-                <RadzenNumeric TValue="double" Change=@(args => OnChangePrice(args)) Class="w-100" />
-                </div>
-                <br>
-                <div >
-                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Description</RadzenText>
-                <RadzenTextArea @oninput=@(args => OnChangeDes(args.Value.ToString())) Class="w-100" />
-                </div>
-            <RadzenButton Style="float:right" Click=@(args => OnSave()) Text="SAVE" ButtonStyle="ButtonStyle.Primary" />
+                        </div>
+                        <br>
+                        <div >
+                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Price</RadzenText>
+                        <RadzenNumeric TValue="double" Change=@(args => OnChangePrice(args)) Class="w-100" />
+                        </div>
+                        <br>
+                        <div >
+                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Description</RadzenText>
+                        <RadzenTextArea @oninput=@(args => OnChangeDes(args.Value.ToString())) Class="w-100" />
+                        </div>
+                    <RadzenButton Style="float:right" Click=@(args => OnSave()) Text="SAVE" ButtonStyle="ButtonStyle.Primary" />
     </div>
     ,
-        new DialogOptions() { Width = "700px", Height = "612px", Resizable = true, Draggable = true, });
+        new DialogOptions() { Width = "700px", Height = "512px", Resizable = true, Draggable = true, });
     }
     public async Task<List<ItemDetailCommand>> OnSave()
     {
@@ -186,34 +197,35 @@
     {
         slectedItem = null;
     }
-    async Task ShowBusyDialogViewDetail(string name,string category,string size,string price,string description)
+    async Task ShowBusyDialogViewDetail(string name,string category,string size,string price,string description,string photo)
     {
         await DialogService.OpenAsync("View Item Detail", d =>
     @<div>
-            <div>
-                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Item</RadzenText>
-                <RadzenTextBox Value="@name" ReadOnly="true" Class="w-100" />
-            </div>
-            <br>
-            <div>
-                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Category</RadzenText>
-                <RadzenTextBox Value="@category" ReadOnly="true" Class="w-100" />
-            </div>
-            <br>
-            <div>
-                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Size</RadzenText>
-                <RadzenTextBox Value="@size" ReadOnly="true" Class="w-100" />
-            </div>
-            <br>
-            <div>
-                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Price</RadzenText>
-                <RadzenTextBox Value="@price" ReadOnly="true" Class="w-100" />
-            </div>
-            <br>
-            <div>
-                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Description</RadzenText>
-                <RadzenTextBox Value="@description" ReadOnly="true" Class="w-100" />
-            </div>
+                 
+                    <div>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Item</RadzenText>
+                        <RadzenTextBox Value="@name" ReadOnly="true" Class="w-100" />
+                    </div>
+                    <br>
+                    <div>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Category</RadzenText>
+                        <RadzenTextBox Value="@category" ReadOnly="true" Class="w-100" />
+                    </div>
+                    <br>
+                    <div>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Size</RadzenText>
+                        <RadzenTextBox Value="@size" ReadOnly="true" Class="w-100" />
+                    </div>
+                    <br>
+                    <div>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Price</RadzenText>
+                        <RadzenTextBox Value="@price" ReadOnly="true" Class="w-100" />
+                    </div>
+                    <br>
+                    <div>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Description</RadzenText>
+                        <RadzenTextBox Value="@description" ReadOnly="true" Class="w-100" />
+                    </div>
     </div>
     ,
         new DialogOptions() { Width = "700px", Height = "552px", Resizable = true, Draggable = true, });
@@ -233,34 +245,34 @@
     {
         await DialogService.OpenAsync("Update Item Detail", d =>
     @<div>
-                <div>
-                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Item</RadzenText>
-                    <RadzenDropDown AllowClear="true" TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
+                        <div>
+                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Item</RadzenText>
+                            <RadzenDropDown AllowClear="true" TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
                         Placeholder="@name" Data=@items TextProperty="name" ValueProperty="name" Change=@(args => OnChangeItemName(args,"DropDown with placeholder")) />
-                </div>
-                <br>
-                <div>
-                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Category</RadzenText>
-                    <RadzenDropDown AllowClear="true" TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
+                        </div>
+                        <br>
+                        <div>
+                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Category</RadzenText>
+                            <RadzenDropDown AllowClear="true" TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
                             Placeholder="@category" Data=@categories TextProperty="name" ValueProperty="name" Change=@(args => OnChangeCategoryName(args,"DropDown with placeholder")) />
-                </div>
-                <br>
-                <div>
-                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Size</RadzenText>
-                    <RadzenDropDown AllowClear="true" TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
+                        </div>
+                        <br>
+                        <div>
+                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Size</RadzenText>
+                            <RadzenDropDown AllowClear="true" TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
                             Placeholder="@size" Data=@sizes TextProperty="name" ValueProperty="name" Change=@(args => OnChangesizeName(args,"DropDown with placeholder")) />
-                </div>
-                <br>
-                <div>
-                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Price</RadzenText>
-                    <RadzenNumeric Value="@price" TValue="double" Change=@(args => OnChangePrice(args)) Class="w-100" />
-                </div>
-                <br>
-                <div>
-                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Description</RadzenText>
-                    <RadzenTextArea Value="@description" @oninput=@(args => OnChangeDes(args.Value.ToString())) Class="w-100" />
-                </div>
-            <RadzenButton Style="float:right" Click=@(args => Update()) Text="SUBMIT" ButtonStyle="ButtonStyle.Primary" />
+                        </div>
+                        <br>
+                        <div>
+                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Price</RadzenText>
+                            <RadzenNumeric Value="@price" TValue="double" Change=@(args => OnChangePrice(args)) Class="w-100" />
+                        </div>
+                        <br>
+                        <div>
+                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Description</RadzenText>
+                            <RadzenTextArea Value="@description" @oninput=@(args => OnChangeDes(args.Value.ToString())) Class="w-100" />
+                        </div>
+                    <RadzenButton Style="float:right" Click=@(args => Update()) Text="SUBMIT" ButtonStyle="ButtonStyle.Primary" />
         </div>
     ,
         new DialogOptions() { Width = "700px", Height = "612px", Resizable = true, Draggable = true, });
@@ -291,7 +303,7 @@
             wb.Properties.Subject = "the Subject";
 
             var ws = wb.Worksheets.Add("Item Menu");
-            
+
 
             ws.Cell(1, 1).Value = "No";
             ws.Cell(1, 2).Value = "Code";
@@ -317,5 +329,18 @@
             wb.SaveAs($@"Excells\Item Menu {DateTime.Now.ToString("dddd, dd MMMM yyyy")}.{type}");
         }
     }
-    
+    void OnChange(string value, string name)
+    {
+        var a = fileName;
+        var aa = fileSize;
+        Console.WriteLine($"{name} value changed");
+    }
+    void OnError(UploadErrorEventArgs args, string name)
+    {
+        Console.WriteLine($"{args.Message}");
+    }
+    void OnCellClick(DataGridCellMouseEventArgs<ItemDetailResponse> args)
+    {
+        
+    }
 }

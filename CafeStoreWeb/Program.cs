@@ -30,6 +30,11 @@ builder.Services.AddScoped<IUserService, UserService>();
 //    );
 builder.Services.AddBlazoredLocalStorage();
 
+builder.Services.AddServerSideBlazor().AddHubOptions(o =>
+{
+    o.MaximumReceiveMessageSize = 10 * 1024 * 1024;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

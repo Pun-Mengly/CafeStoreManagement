@@ -3,6 +3,7 @@
     public class ItemResponse
     {
         public Guid Id { get; set; }
+        public int No { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public string Photo { get; set; }
