@@ -10,7 +10,7 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="" @onclick="@Logout" target="_blank">Log out</a>
+            <RadzenButton Text="LOG OUT" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Danger" Click=@(args => Logout()) target="_blank"></RadzenButton>
         </div>
 
         <article class="content px-4">
@@ -25,6 +25,6 @@
 @code{
     async void Logout(){
         await sessionStorage.ClearAsync();
-        _navigationManager.NavigateTo("/", true);
+        _navigationManager.NavigateTo("/",true,true);
     }
 }

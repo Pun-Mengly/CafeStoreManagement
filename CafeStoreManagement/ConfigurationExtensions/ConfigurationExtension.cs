@@ -68,6 +68,14 @@ public static class ConfigurationExtension
         });
         //-----------------------------------------------------------
 
+        //services.Configure<DataProtectionTokenProviderOptions>(options =>
+        //{
+        //    options.TokenLifespan = TimeSpan.FromMinutes(5);
+        //});
+        //services.AddIdentity<ApplicationUser, IdentityRole>()
+        //.AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders();
+
+
         #endregion
 
 

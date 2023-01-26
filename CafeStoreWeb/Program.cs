@@ -24,6 +24,7 @@ builder.Services.AddScoped<ContextMenuService>();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7018/") });
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddScoped<NorthwindService>();
 //builder.Services.AddBlazoredSessionStorage();
 //builder.Services.AddBlazoredSessionStorage(config =>
 //        config.JsonSerializerOptions.WriteIndented = false

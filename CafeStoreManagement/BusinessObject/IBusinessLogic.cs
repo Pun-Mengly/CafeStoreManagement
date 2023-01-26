@@ -23,11 +23,13 @@ public interface IBusinessLogic
         public Task<ItemDetailCommand> UpdateItemDetail(ItemDetailCommand itemDetailCommand);
         public Task<Guid> DeleteItemDetail(Guid id, bool isDeleted);
     
-    #endregion  
+    #endregion  Initailization
     public void InitailizationData();
 
-    #region Sizes
-  
+    #region User Management
+    //Task GenerateEmailConfirmationTokenAsync(ApplicationUser user);
+
+    //Task GenerateForgotPasswordTokenAsync(ApplicationUser user);
     #endregion
 
 

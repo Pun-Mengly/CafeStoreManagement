@@ -18,7 +18,7 @@
                             <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Username</RadzenText>
                         </div>
                         <div class="col-md-8">
-                    <RadzenTextBox TValue="string" @oninput=@(args => OnChangeUserName(args.Value.ToString())) style="width: 100%;" />
+                    <RadzenTextBox TValue="string" @oninput=@(args => OnChangeUserName(args.Value!.ToString()!)) style="width: 100%;" />
                         </div>
                     </div>
                     <br />
@@ -27,7 +27,7 @@
                     <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Email Address</RadzenText>
                 </div>
                 <div class="col-md-8">
-                    <RadzenTextBox style="width: 100%;" @oninput=@(args => OnChangeEmail(args.Value.ToString())) />
+                    <RadzenTextBox style="width: 100%;" @oninput=@(args => OnChangeEmail(args.Value!.ToString()!)) />
                 </div>
             </div>
             <br />
@@ -36,14 +36,23 @@
                     <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Password</RadzenText>
                 </div>
                 <div class="col-md-8">
-                    <RadzenPassword style="width: 100%;" @oninput=@(args => OnChangePasword(args!.Value!.ToString())) />
+                    <RadzenPassword style="width: 100%;" @oninput=@(args => OnChangePasword(args.Value!.ToString()!)) />
                 </div>
             </div>
             <br />
             <RadzenButton Style="float:right" Text="SUBMIT" ButtonStyle="ButtonStyle.Primary"
                           Click="@OnRegister" />
-@*            <button style="float:right" @onclick="@DoSomthing" type="button" class="btn btn-primary" data-bs-toggle="button">SUBMIT</button>
-*@          
+        @if(isLoading){
+                <Fold Color="@color" style="
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            margin-top: -50px;
+                            margin-left: -50px;
+                            width: 46px;
+                            height: 46px;" 
+                    />
+        }      
         </RadzenCard>
     </RadzenCard>
     <div class="alert alert-primary @HideAlert" role="alert">
@@ -64,12 +73,17 @@
 </div>
 
 @code {
+    bool isLoading;
+    string color = "#635ED5";
     string userName = "";
     string password = "";
     string email = "";
     [Inject] 
     public IUserService?  user{ get; set; }
-
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = false;
+    }
 
     private void NavigateToCounterComponent()
     {
@@ -77,7 +91,7 @@
     }
     void OnLogin(LoginArgs args, string name)
     {
-       
+
         if (args.Username == userName && args.Password == password)
         {
             Navigation.NavigateTo("");
@@ -86,29 +100,39 @@
     }
 
 
-    async void OnRegister()
+    async Task<string> OnRegister()
     {
+        isLoading = true;
         var model = new RegisterModel()
         {
             Username=userName,
             Email=email,
             Password=password
         };
-         var result=await Http.PostAsJsonAsync("api/Authenticate/register-admin", model);
-
-
-        var login = await Http.PostAsJsonAsync("api/Authenticate/login", model);
-        var obj = login.Content.ReadAsStringAsync().Result;
-        string token = JsonSerializer.Deserialize<TokenModel>(obj, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!.token;
-         Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-         var resultInit=await Http.GetAsync("api/Initailizataion");
-         if(result.IsSuccessStatusCode){
-            
-            _navigationManager.NavigateTo("/", true);
-         }
-
+        var result=await Http.PostAsJsonAsync("api/Authenticate/register-admin", model);
+        if(result.IsSuccessStatusCode){
+            var login = await Http.PostAsJsonAsync("api/Authenticate/login", model);
+            if(login.IsSuccessStatusCode){
+                var obj = login.Content.ReadAsStringAsync().Result;
+                string token = JsonSerializer.Deserialize<TokenModel>(obj, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!.token!;
+                Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var resultInit = await Http.GetAsync("api/Initailizataion");
+                if(resultInit.IsSuccessStatusCode){
+                    _navigationManager.NavigateTo("/", true);
+                }
+                else{
+                    color = "#F70000";
+                }
+            }
+            else {
+                color = "#F70000";
+            }
+        }
+        else{
+            color = "#F70000";
+        }
+        return color;
     }
-
     void OnResetPassword(string value, string name)
     {
         Console.WriteLine($"{name} -> ResetPassword for user: {value}");

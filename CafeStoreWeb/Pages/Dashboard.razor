@@ -1,0 +1,103 @@
+﻿@page "/dashboard"
+@using System.Globalization
+<div style="padding-right:12px;">
+    <RadzenCard Class=" rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="margin: 0 calc(-1 * var(--rz-card-padding));margin-top:unset; padding: 2rem;">
+        <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light"><strong>Delivery Information</strong></RadzenText>
+        <div class="row">
+            <div class="col-md-3 col-xl-3">
+                <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-primary-light d-flex mt-3 mb-0">Country</RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@Name</b></RadzenText>
+            </div>
+            <div class="col-md-3 col-xl-3">
+                <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-primary-light d-flex mt-3 mb-0">Ship name</RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@Name</b></RadzenText>
+            </div>
+            <div class="col-md-3 col-xl-3">
+                <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-primary-light d-flex mt-3 mb-0">Ship name</RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@Name</b></RadzenText>
+            </div>
+            <div class="col-md-3 col-xl-3">
+                <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-primary-light d-flex mt-3 mb-0">Ship name</RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@Name</b></RadzenText>
+            </div>
+        </div>
+    </RadzenCard>
+    <div class="row d-flex align-content-center" >
+        <RadzenCard Class="col-md-3 col-xl-3 col-lg-3 my-2 rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="padding: 3rem;width: 24.5%;margin-right: 0%;">
+            <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light"><strong>Delivery Information</strong></RadzenText>
+           
+        </RadzenCard>
+        <RadzenCard Class="col-md-3 col-xl-3 col-lg-3 my-2 rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="padding: 3rem;width: 24%;margin-right: 1%;">
+            <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light"><strong>Delivery Information</strong></RadzenText>
+            
+        </RadzenCard>
+        <RadzenCard Class="col-md-3 col-xl-3 col-lg-3 my-2 rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="padding: 3rem;width: 24%;margin-right: 1%;">
+            <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light"><strong>Delivery Information</strong></RadzenText>
+            
+    </RadzenCard>
+        <RadzenCard Class="col-md-3 col-xl-3 col-lg-3 my-2 rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="padding: 3rem;width: 24.5%;margin-right: 1%;">
+            <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light"><strong>Delivery Information</strong></RadzenText>
+
+        </RadzenCard>
+
+    </div>
+   
+    <RadzenCard Class="my-3 rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="margin: 0 calc(-1 * var(--rz-card-padding)); padding: 2rem;">
+        <div class="container">
+            <div class="row my-5">
+                <div class="col-sm-12 col-lg-8">
+                    <RadzenChart ColorScheme="@colorScheme">
+                        @for (var year = 2013; year <= 2020; year++)
+                        {
+                            var currentYearRevenue = revenue.Where(r => r.Year == year).ToList();
+                            <RadzenColumnSeries Data="@currentYearRevenue" CategoryProperty="Quarter" Title="@year.ToString()" ValueProperty="Revenue" />
+                        }
+                        <RadzenColumnOptions Margin="0" />
+                        <RadzenValueAxis Formatter="@FormatAsUSD" />
+                    </RadzenChart>
+                </div>
+                <div class="col-sm-12 col-lg-4">
+                    <RadzenChart ColorScheme="@colorScheme">
+                        <RadzenPieSeries Data="@revenue.Where(r => r.Year == 2020)" Title="Revenue" CategoryProperty="Quarter" ValueProperty="Revenue" />
+                    </RadzenChart>
+                </div>
+            </div>
+            
+        </div>
+    </RadzenCard>
+</div>
+@code {
+    ColorScheme colorScheme = ColorScheme.Palette;
+
+    class DataItem
+    {
+        public int Year { get; set; }
+        public string Quarter { get; set; }
+        public double Revenue { get; set; }
+    }
+
+    string FormatAsUSD(object value)
+    {
+        return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("en-US"));
+    }
+
+    IList<DataItem> revenue = new List<DataItem>();
+
+    protected override void OnInitialized()
+    {
+        var random = new Random();
+
+        for (var year = 2013; year <= 2020; year++)
+        {
+            for (var quarter = 1; quarter <= 4; quarter++)
+            {
+                revenue.Add(new DataItem
+                    {
+                        Year = year,
+                        Quarter = $"Q{quarter}",
+                        Revenue = random.NextDouble() * 200000
+                    });
+            }
+        }
+    }
+}

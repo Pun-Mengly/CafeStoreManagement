@@ -3,20 +3,31 @@ using CafeStoreManagement.ConfigurationModels;
 using CafeStoreManagement.Features;
 using CafeStoreManagement.Features.ItemDetail.Response;
 using CafeStoreManagement.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Collections;
 
 public class BusinessLogic : IBusinessLogic
 {
+    //private readonly UserManager<ApplicationUser> _userManager;
     private readonly DataContext dataContext;
     private readonly IHttpContextAccessor httpContextAccessor;
     private readonly string userId;
+    private readonly IConfiguration _configuration;
+    //private readonly IEmailService _emailService;
 
-    public BusinessLogic(DataContext _dataContext, IHttpContextAccessor _httpContextAccessor)
+
+
+    public BusinessLogic(DataContext _dataContext, IHttpContextAccessor _httpContextAccessor
+                         /*UserManager<ApplicationUser> userManager*/, IConfiguration configuration /*IEmailService emailService*/)
     {
         this.dataContext = _dataContext;
         this.httpContextAccessor = _httpContextAccessor;
         this.userId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+        //_userManager = userManager;
+        _configuration = configuration;
+        //_emailService = emailService;
     }
     public async Task<List<ItemCommand>> PostItem(List<ItemCommand> postItems)
     {
@@ -594,4 +605,40 @@ public class BusinessLogic : IBusinessLogic
             throw new Exception(e.Message);
         }
     }
+
+    //public async Task GenerateEmailConfirmationTokenAsync(ApplicationUser user)
+    //{
+    //    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+    //    if (!string.IsNullOrEmpty(token))
+    //    {
+    //        //await SendEmailConfirmationEmail(user, token);
+    //    }
+    //}
+
+    //public async Task GenerateForgotPasswordTokenAsync(ApplicationUser user)
+    //{
+    //    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+    //    if (!string.IsNullOrEmpty(token))
+    //    {
+    //        await SendForgotPasswordEmail(user, token);
+    //    }
+    //}
+    //private async Task SendForgotPasswordEmail(ApplicationUser user, string token)
+    //{
+    //    string appDomain = _configuration.GetSection("Application:AppDomain").Value;
+    //    string confirmationLink = _configuration.GetSection("Application:ForgotPassword").Value;
+
+    //    UserEmailOptions options = new UserEmailOptions
+    //    {
+    //        ToEmails = new List<string>() { user.Email },
+    //        PlaceHolders = new List<KeyValuePair<string, string>>()
+    //            {
+    //                new KeyValuePair<string, string>("{{UserName}}", user.FirstName),
+    //                new KeyValuePair<string, string>("{{Link}}",
+    //                    string.Format(appDomain + confirmationLink, user.Id, token))
+    //            }
+    //    };
+
+    //    await _emailService.SendEmailForForgotPassword(options);
+    //}
 }
