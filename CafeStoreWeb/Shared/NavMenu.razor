@@ -1,6 +1,6 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">FABEX</a>
+        <a class="navbar-brand" href="dashboard"><strong>F A B E X</strong></a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -11,12 +11,12 @@
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="dashboard">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Dashboard
+                <span class="oi oi-bar-chart" aria-hidden="true"></span> Dashboard
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="home" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Item Detail
+                <span class="oi oi-grid-two-up" aria-hidden="true"></span> Item Detail
             </NavLink>
         </div>
         <div class="nav-item px-3">
@@ -25,16 +25,59 @@
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Report
+            <NavLink class="nav-link justify-content-between" @onclick="()=>expandSubNavReport = !expandSubNavReport">
+                <div>
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Report
+                </div>
+                <span class="@(expandSubNavReport? "oi oi-caret-bottom":"oi oi-caret-right")" aria-hidden="true" style="width:auto"></span>
             </NavLink>
-        </div> 
-       
+             @if (expandSubNavReport)
+            {
+                <div class="nav-item px-4">
+                    <NavLink class="nav-link" href="fetchdata">
+                        <span class="oi oi-home" aria-hidden="true"></span> Sale Summary
+                    </NavLink>
+                </div>
+                <div class="nav-item px-4">
+                    <NavLink class="nav-link" href="re1">
+                        <span class="oi oi-dollar" aria-hidden="true"></span> Sale Detail
+                    </NavLink>
+                </div>
+                
+            }
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link justify-content-between" @onclick="()=>expandSubNavSetting = !expandSubNavSetting">
+                <div>
+                    <span class="oi oi-cog" aria-hidden="true"></span> Setting
+                </div>
+                <span class="@(expandSubNavSetting? "oi oi-caret-bottom":"oi oi-caret-right")" aria-hidden="true" style="width:auto"></span>
+            </NavLink>
+            @if (expandSubNavSetting)
+            {
+                <div class="nav-item px-4">
+                    <NavLink class="nav-link" href="outlet">
+                        <span class="oi oi-home" aria-hidden="true"></span> Outlet
+                    </NavLink>
+                </div>
+                <div class="nav-item px-4">
+                    <NavLink class="nav-link" href="bb">
+                        <span class="oi oi-dollar" aria-hidden="true"></span> Payment
+                    </NavLink>
+                </div>
+                
+            }
+        </div>
+
     </nav>
 </div>
 
 @code {
+    private bool expandSubNavSetting;
+    private bool expandSubNavReport;
     private bool collapseNavMenu = true;
+    [Parameter]
+    public string Icon { get; set; }
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 

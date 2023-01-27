@@ -32,6 +32,7 @@ public class DataContext : IdentityDbContext<IdentityUser> //DBContext
         public DbSet<ItemModel> ItemModels { get; set; }
         public DbSet<CategoryModel> CategoryModels { get; set; }
         public DbSet<SizeModel> SizeModels { get; set; }
+        public DbSet<OutletModel> OutletModels { get; set; }
         //public DbSet<PromotionModel> PromotionModels { get; set; }
         //public DbSet<PromotionTypeModel> PromotionTypeModels { get; set; }
         //public DbSet<PaymentMethodModel> PaymentMethodModels { get; set; }

@@ -2,46 +2,30 @@
 @using System.Globalization
 <div style="padding-right:12px;">
     <RadzenCard Class=" rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="margin: 0 calc(-1 * var(--rz-card-padding));margin-top:unset; padding: 2rem;">
-        <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light"><strong>Delivery Information</strong></RadzenText>
+        <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light"><strong>Item Popular </strong></RadzenText>
         <div class="row">
-            <div class="col-md-3 col-xl-3">
-                <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-primary-light d-flex mt-3 mb-0">Country</RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1"><b>@Name</b></RadzenText>
-            </div>
-            <div class="col-md-3 col-xl-3">
-                <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-primary-light d-flex mt-3 mb-0">Ship name</RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1"><b>@Name</b></RadzenText>
-            </div>
-            <div class="col-md-3 col-xl-3">
-                <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-primary-light d-flex mt-3 mb-0">Ship name</RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1"><b>@Name</b></RadzenText>
-            </div>
-            <div class="col-md-3 col-xl-3">
-                <RadzenText TextStyle="TextStyle.Overline" Class="rz-color-primary-light d-flex mt-3 mb-0">Ship name</RadzenText>
-                <RadzenText TextStyle="TextStyle.Body1"><b>@Name</b></RadzenText>
-            </div>
+            @foreach (var item in ListItemPopulars)
+            {
+                <div class="col-md-3 col-xl-3">
+                    <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light d-flex mt-3 mb-0">@item.ToUpper()</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-danger-light"><b>@item</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-danger-light"><b>@item</b></RadzenText>
+                </div>
+            }
         </div>
     </RadzenCard>
-    <div class="row d-flex align-content-center" >
-        <RadzenCard Class="col-md-3 col-xl-3 col-lg-3 my-2 rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="padding: 3rem;width: 24.5%;margin-right: 0%;">
-            <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light"><strong>Delivery Information</strong></RadzenText>
-           
-        </RadzenCard>
-        <RadzenCard Class="col-md-3 col-xl-3 col-lg-3 my-2 rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="padding: 3rem;width: 24%;margin-right: 1%;">
-            <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light"><strong>Delivery Information</strong></RadzenText>
-            
-        </RadzenCard>
-        <RadzenCard Class="col-md-3 col-xl-3 col-lg-3 my-2 rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="padding: 3rem;width: 24%;margin-right: 1%;">
-            <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light"><strong>Delivery Information</strong></RadzenText>
-            
-    </RadzenCard>
-        <RadzenCard Class="col-md-3 col-xl-3 col-lg-3 my-2 rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="padding: 3rem;width: 24.5%;margin-right: 1%;">
-            <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light"><strong>Delivery Information</strong></RadzenText>
-
-        </RadzenCard>
-
+    <div class="my-3 d-flex justify-content-around">
+        @foreach(var outlet in ListOutlets)
+        {
+            <RadzenCard Class="col-md-3 col-xl-3 col-lg-3  rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="padding: 2rem;width: 24%">
+                <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light"><strong>@outlet</strong></RadzenText>
+                <RadzenText TextStyle="TextStyle.H5" Class="rz-color-danger-light"><b>@(revenue.First().Revenue.ToString("C0", CultureInfo.CreateSpecificCulture("en-US")))</b></RadzenText>
+                <div class="text-end">
+                    <RadzenButton Class="rz-color-primary-light" Variant="Variant.Text" Text="See more" />
+                </div>
+            </RadzenCard>
+        }
     </div>
-   
     <RadzenCard Class="my-3 rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="margin: 0 calc(-1 * var(--rz-card-padding)); padding: 2rem;">
         <div class="container">
             <div class="row my-5">
@@ -89,12 +73,12 @@
 
         for (var year = 2013; year <= 2020; year++)
         {
-            for (var quarter = 1; quarter <= 4; quarter++)
+            foreach (var item in ListOutlets)
             {
                 revenue.Add(new DataItem
                     {
                         Year = year,
-                        Quarter = $"Q{quarter}",
+                        Quarter = item,
                         Revenue = random.NextDouble() * 200000
                     });
             }

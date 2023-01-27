@@ -3,10 +3,6 @@ using CafeStoreManagement.ConfigurationModels;
 using CafeStoreManagement.Features;
 using CafeStoreManagement.Features.ItemDetail.Response;
 using CafeStoreManagement.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System.Collections;
 
 public class BusinessLogic : IBusinessLogic
 {
@@ -159,7 +155,7 @@ public class BusinessLogic : IBusinessLogic
                     CreatedBy = userId,
                     Price = itemDetail.Price,
                     IsDeleted = false,
-                    Description = itemDetail.Decription,
+                    Description = itemDetail!.Decription,
                     CategortId = categories.Id,
                     ItemId = items.Id,
                     SizeId = sizes.Id
@@ -604,6 +600,38 @@ public class BusinessLogic : IBusinessLogic
         {
             throw new Exception(e.Message);
         }
+    }
+
+    public async Task<OutletModel> CreateOutlet(OutletModel model)
+    {
+        try
+        {
+            OutletModel outlet = new OutletModel()
+            {
+                Id = Guid.NewGuid(),
+                CreatedBy = userId,
+                CreatedDate = DateTime.Now,
+                Name = model.Name,
+                Email = model.Email,
+                Description = model.Description,
+                Website = model.Website,
+                PhoneNumber = model.PhoneNumber,
+                Location = model.Location,
+                IsDeleted = model.IsDeleted,
+            };
+            await dataContext.OutletModels.AddAsync(outlet);
+            await dataContext.SaveChangesAsync();
+            return model;
+        }
+        catch(Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+
+    public async Task<List<OutletModel>> GetAllOutlets()
+    {
+        return await dataContext.OutletModels.Where(e=>e.CreatedBy==userId).ToListAsync();
     }
 
     //public async Task GenerateEmailConfirmationTokenAsync(ApplicationUser user)

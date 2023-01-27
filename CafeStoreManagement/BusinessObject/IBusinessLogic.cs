@@ -22,8 +22,14 @@ public interface IBusinessLogic
         public Task<List<ItemDetailResponse>> GetItemDetail();
         public Task<ItemDetailCommand> UpdateItemDetail(ItemDetailCommand itemDetailCommand);
         public Task<Guid> DeleteItemDetail(Guid id, bool isDeleted);
-    
+
     #endregion  Initailization
+
+    #region Outlet
+    public Task<OutletModel> CreateOutlet(OutletModel model);
+    public Task<List<OutletModel>> GetAllOutlets();
+    #endregion
+
     public void InitailizationData();
 
     #region User Management
