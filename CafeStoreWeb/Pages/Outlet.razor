@@ -1,4 +1,159 @@
-﻿@page "/outlet"
+﻿@page "/outlet";
+@using CafeStoreManagement.Models;
+@inject HttpClient Http;
+@inject Blazored.LocalStorage.ILocalStorageService sessionStorage;
+
 <div>
-    <h2>Outlet</h2>
+    @if (outlets is null)
+    {
+        <span class="spinner-border spinner-border-md d-flex justify-content-center centered" role="status" aria-hidden="true"></span>
+    }
+    @*Show List Template*@
+    @if(outlets is not null)
+    {
+        <div style="display:@DisplayCreateTemplate">
+            <div id="list-outlets" class="d-flex justify-content-sm-between" style="background-color:indigo; padding:12px;height:60px;">
+                <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1" Class="my-2" Style="color:white">
+                    LIST OUTLETS
+                </RadzenText>
+                <RadzenButton Click=@(args => OpenCreateTemplate()) Text="Add New" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Light" />
+            </div>
+            <div class="rz-border-info-darker" style="padding:12px">
+
+                <div style="display: flex; align-items: center; margin-bottom: 16px">
+                    <RadzenButton Click="@ClearSelection" Text="Clear Selection" />
+                    @if (selectedOutet?.Any() == true)
+                    {
+                        <div style="margin-left: 16px">
+                            Selected Employee: @selectedOutet[0].Name @selectedOutet[0].Id
+                        </div>
+                    }
+                </div>
+                <RadzenDataGrid AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4"
+                            AllowSorting="true" Data="@outlets" TItem="OutletModel" ColumnWidth="200px"
+                            SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedOutet>
+                    <Columns>
+                        <RadzenDataGridColumn TItem="OutletModel" Property="Id" Title="Id" />
+                        <RadzenDataGridColumn TItem="OutletModel" Property="Name" Title="Name" />
+                        <RadzenDataGridColumn TItem="OutletModel" Property="CreatedDate" Title="Created Date" FormatString="{0:d}" />
+                        <RadzenDataGridColumn TItem="OutletModel" Property="PhoneNumber" Title="Phone Number" />
+                        <RadzenDataGridColumn TItem="OutletModel" Property="Location" Title="Location" />
+                    </Columns>
+                </RadzenDataGrid>
+            </div>
+       </div>
+    }
+    @*Show Create Template*@
+    <div style="display:@NotDisplayCreateTemplate">
+        <div id="create-outlets" class="d-flex justify-content-sm-between" style="background-color:indigo; padding:12px;height:60px;">
+            <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1" Class="my-2" Style="color:white">
+                CREATE OUTLET
+            </RadzenText>
+            <RadzenButton Click=@(args => CloseCreateTemplate()) Text="Back" Icon="arrow_back_ios" ButtonStyle="ButtonStyle.Light" />
+        </div>
+        @*Form Create*@
+        <div class="rz-border-info-darker" style="padding:12px">
+            <RadzenFieldset Text="Outlet Info">
+                <div class="row my-2">
+                    <div class="col-md-4 align-items-center d-flex">
+                        <RadzenLabel Text="Name" />
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenTextBox style="width: 100%;" Change=@(args => OnChangeName(args)) />
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-md-4 align-items-center d-flex">
+                        <RadzenLabel Text="Email" />
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenTextBox style="width: 100%;" Change=@(args => OnChangeEmail(args)) />
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-md-4 align-items-center d-flex">
+                        <RadzenLabel Text="Phone Number" />
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenTextBox style="width: 100%;" Change=@(args => OnChangePhoneNumber(args)) />
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-md-4 align-items-center d-flex">
+                        <RadzenLabel Text="Location" />
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenTextBox style="width: 100%;" Change=@(args => OnChangeLocation(args)) />
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-md-4 align-items-center d-flex">
+                        <RadzenLabel Text="Website" />
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenTextBox style="width: 100%;" Change=@(args => OnChangeWebsite(args)) />
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-md-4 align-items-center d-flex">
+                        <RadzenLabel Text="Description" />
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenTextBox style="width: 100%;" Change=@(args => OnChangeDescription(args)) />
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-md-4 align-items-center d-flex">
+                        <RadzenLabel Text="Active" />
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenDropDown AllowClear="true" TValue="string" style="width: 100%;" 
+                                        Data=@type
+                                        Change=@(args => OnChangeType(args)) />
+                    </div>
+                </div>
+                <RadzenButton class="my-2" Text="Save" Icon="save" ButtonType="ButtonType.Submit" Style="float:right" Click="@(args=>OnSave(model))" />
+            </RadzenFieldset>
+        </div>
+    </div>
 </div>
+
+@code{
+    IList<OutletModel> selectedOutet;
+    OutletModel model = new OutletModel();
+    List<string> type = new List<string>() {"Active","Inactive"};
+    [Parameter]
+    public string DisplayCreateTemplate { get; set; } = "inherit";
+    public string NotDisplayCreateTemplate { get; set; } = "none";
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await GetOutletsAsync(Http,sessionStorage);
+        }
+        StateHasChanged();
+    }
+    void ClearSelection()
+    {
+        selectedOutet = null;
+    }
+    private void OpenCreateTemplate()
+    {
+        DisplayCreateTemplate = "none";
+        NotDisplayCreateTemplate = "inherit";
+    }
+    private void CloseCreateTemplate()
+    {
+        DisplayCreateTemplate = "inherit";
+        NotDisplayCreateTemplate = "none";
+    }
+    
+    //preparing model
+    string OnChangeName(string name) => model.Name=name;
+    string OnChangeEmail(string email) => model.Email=email;
+    string OnChangePhoneNumber(string phoneNumber) => model.PhoneNumber=phoneNumber;
+    string OnChangeLocation(string location) => model.Location=location;
+    string OnChangeWebsite(string website) => model.Website=website;
+    string OnChangeDescription(string desc) => model.Description=desc;
+    bool OnChangeType(object value) => value== "Active" ? model.IsDeleted=false : model.IsDeleted=true;
+}
