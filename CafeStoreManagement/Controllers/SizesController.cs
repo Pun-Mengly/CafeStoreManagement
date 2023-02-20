@@ -18,6 +18,8 @@ namespace CafeStoreManagement.Controllers
 
         [HttpGet]
         public async Task<IEnumerable<SizeModel>> get() => await _logic.GetAllSizes();
-        
+
+
+
     }
 }

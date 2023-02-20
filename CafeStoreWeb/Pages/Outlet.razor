@@ -12,10 +12,11 @@
     @if(outlets is not null)
     {
         <div style="display:@DisplayCreateTemplate">
-            <div id="list-outlets" class="d-flex justify-content-sm-between" style="background-color:indigo; padding:12px;height:60px;">
+            <div id="list-outlets" class="d-flex justify-content-between" style="background-color:indigo; padding:12px;height:60px;">
                 <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1" Class="my-2" Style="color:white">
                     LIST OUTLETS
                 </RadzenText>
+                <div></div>
                 <RadzenButton Click=@(args => OpenCreateTemplate()) Text="Add New" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Light" />
             </div>
             <div class="rz-border-info-darker" style="padding:12px">
@@ -45,10 +46,11 @@
     }
     @*Show Create Template*@
     <div style="display:@NotDisplayCreateTemplate">
-        <div id="create-outlets" class="d-flex justify-content-sm-between" style="background-color:indigo; padding:12px;height:60px;">
+        <div id="create-outlets" class="d-flex justify-content-between" style="background-color:indigo; padding:12px;height:60px;">
             <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1" Class="my-2" Style="color:white">
                 CREATE OUTLET
             </RadzenText>
+       <div></div>
             <RadzenButton Click=@(args => CloseCreateTemplate()) Text="Back" Icon="arrow_back_ios" ButtonStyle="ButtonStyle.Light" />
         </div>
         @*Form Create*@

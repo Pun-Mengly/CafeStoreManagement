@@ -28,7 +28,5 @@ public partial class Outlet
         Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         var response = await Http.PostAsJsonAsync("api/Outlets", model);
         //show success alert 
-
-
     }
 }
