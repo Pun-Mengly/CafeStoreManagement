@@ -131,6 +131,12 @@ namespace CafeStoreManagement.Migrations
                     b.Property<Guid>("ItemId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ItemModelId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("OutletId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<double>("Price")
                         .HasMaxLength(50)
                         .HasColumnType("float");
@@ -139,6 +145,8 @@ namespace CafeStoreManagement.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ItemModelId");
 
                     b.ToTable("tblItemDetail", (string)null);
                 });
@@ -714,6 +722,13 @@ namespace CafeStoreManagement.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CafeStoreManagement.Models.ItemDetailModel", b =>
+                {
+                    b.HasOne("CafeStoreManagement.Models.ItemModel", null)
+                        .WithMany("ItemDetails")
+                        .HasForeignKey("ItemModelId");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -763,6 +778,11 @@ namespace CafeStoreManagement.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("CafeStoreManagement.Models.ItemModel", b =>
+                {
+                    b.Navigation("ItemDetails");
                 });
 #pragma warning restore 612, 618
         }

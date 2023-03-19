@@ -26,18 +26,12 @@
                 </RadzenTemplateForm> 
             </RadzenCard>
         </RadzenCard>
-        @if(isLoading){
-            <Fold Color="@color" style="
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    margin-top: -50px;
-                    margin-left: -50px;
-                    width: 46px;
-                    height: 46px;" 
-            />
-}
+        @if (isLoading)
+        {
+            <span class="spinner-border spinner-border-md d-flex justify-content-center centered" role="status" aria-hidden="true"></span>
+        }
     </div>
+</div>
 
     <style>
     #divElement{
@@ -49,8 +43,8 @@
         background-repeat :no-repeat;
         background-size:cover;
     }
+  
     </style>
-</div>
 
 @code {
     bool isLoading;
@@ -81,7 +75,7 @@
             token = JsonSerializer.Deserialize<TokenModel>(obj)!.token;
             await sessionStorage.SetItemAsync("Token", token);
             var test = await sessionStorage.GetItemAsync<string>("Token");
-            Navigation.NavigateTo("/home");
+            Navigation.NavigateTo("/dashboard");
         }
         else
         {

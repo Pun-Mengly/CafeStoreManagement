@@ -6,8 +6,8 @@ public static class ConfigurationExtension
             #region Depandecy Injection
             services.AddScoped<ResponseModel>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<IBusinessLogic, BusinessLogic>();
             services.AddTransient<IPrincipal>(provider => provider.GetService<IHttpContextAccessor>()!.HttpContext!.User);
+            services.AddScoped<IBusinessLogic, BusinessLogic>(); //Use Strategy BusinessLogic
 
         #endregion
         #region Config JWT

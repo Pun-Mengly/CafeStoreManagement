@@ -25,6 +25,6 @@
 @code{
     async void Logout(){
         await sessionStorage.ClearAsync();
-        _navigationManager.NavigateTo("/",true,true);
+        _navigationManager.NavigateTo("/login",true,true);
     }
 }

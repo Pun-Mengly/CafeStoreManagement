@@ -1,0 +1,96 @@
+﻿@page "/outlet";
+@using CafeStoreManagement.Models;
+@inject HttpClient Http;
+@inject Blazored.LocalStorage.ILocalStorageService sessionStorage;
+@inject NavigationManager Navigation;
+@inject DialogService DialogService
+
+
+<div>
+    @if (outlets is null)
+    {
+        <span class="spinner-border spinner-border-md d-flex justify-content-center centered" role="status" aria-hidden="true"></span>
+    }
+    @*Show List Template*@
+    @if(outlets is not null)
+    {
+        <div>
+            <div id="list-outlets" class="d-flex justify-content-between" style="background-color:indigo; padding:12px;height:60px;">
+                <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1" Class="my-2" Style="color:white">
+                    LIST OUTLETS
+                </RadzenText>
+                <RadzenButton Click=@(args => GoToCreate()) Text="Add New" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Light" />
+            </div>
+            <div class="rz-border-info-darker" style="padding:12px">
+
+                <div style="display: flex; align-items: center; margin-bottom: 16px">
+                    <RadzenButton Click="@ClearSelection" Text="Clear Selection" />
+                    @if (selectedOutet?.Any() == true)
+                    {
+                        <div style="margin-left: 16px">
+                            Selected Employee: @selectedOutet[0].Name @selectedOutet[0].Id
+                        </div>
+                    }
+                </div>
+                <RadzenDataGrid AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="10"
+                            AllowSorting="true" Data="@outlets" TItem="OutletModel" ColumnWidth="200px"
+                            SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedOutet>
+                    <Columns>
+                        <RadzenDataGridColumn TItem="OutletModel" Property="Id" Title="Id" />
+                        <RadzenDataGridColumn TItem="OutletModel" Property="Name" Title="Name" />
+                        <RadzenDataGridColumn TItem="OutletModel" Property="CreatedDate" Title="Created Date" FormatString="{0:d}" />
+                        <RadzenDataGridColumn TItem="OutletModel" Property="PhoneNumber" Title="Phone Number" />
+                        <RadzenDataGridColumn TItem="OutletModel" Property="Location" Title="Location" />
+                        <RadzenDataGridColumn Width="160px" TItem="OutletModel" Property="Location" Title="Action">
+                            <Template Context="data" >
+                                <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter" Icon="visibility" class="m-1" Click=@(() => Console.Write("HH")) />
+                                <RadzenButton ButtonStyle="ButtonStyle.Warning" Variant="Variant.Flat" Shade="Shade.Lighter" Icon="edit" class="m-1" Click=@(() => Console.Write("HH")) />
+                                <RadzenButton ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" Icon="highlight_off" class="m-1" Click=@(() => Console.Write("HH")) />
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+            </div>
+       </div>
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Confirm Dialog</RadzenText>
+            <RadzenButton Text="Confirm dialog" Style="width: 100%;" ButtonStyle="ButtonStyle.Secondary" Click=@(args => DialogService.Confirm("Are you sure?", "MyTitle", new ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" })) />
+        </RadzenCard>
+    }
+    
+</div>
+
+@code{
+    IList<OutletModel> selectedOutet;
+    OutletModel model = new OutletModel();
+    List<string> type = new List<string>() {"Active","Inactive"};
+    [Parameter]
+    public int? StatusCode { get; set; }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await GetOutletsAsync();
+        }
+        StateHasChanged();
+        //DialogService.OnOpen += Open;
+        //DialogService.OnClose += Close;
+    }
+    void ClearSelection()
+    {
+        selectedOutet = null;
+    }
+    private void GoToCreate()
+    {
+        Navigation.NavigateTo("outlet/create");
+    }
+    //preparing model
+    string OnChangeName(string name) => model.Name=name;
+    string OnChangeEmail(string email) => model.Email=email;
+    string OnChangePhoneNumber(string phoneNumber) => model.PhoneNumber=phoneNumber;
+    string OnChangeLocation(string location) => model.Location=location;
+    string OnChangeWebsite(string website) => model.Website=website;
+    string OnChangeDescription(string desc) => model.Description=desc;
+    bool OnChangeType(object value) => value== "Active" ? model.IsDeleted=false : model.IsDeleted=true;
+
+}

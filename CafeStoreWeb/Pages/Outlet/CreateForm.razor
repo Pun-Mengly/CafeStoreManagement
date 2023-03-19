@@ -1,0 +1,98 @@
+﻿@page "/outlet/create";
+@using CafeStoreManagement.Models;
+@inject HttpClient Http;
+@inject Blazored.LocalStorage.ILocalStorageService sessionStorage;
+@inject IJSRuntime JSRuntime;
+@inject NavigationManager Navigation;
+@inject NotificationService NotificationService
+<div>
+    <div id="create-outlets" class="d-flex justify-content-between" style="background-color:indigo; padding:12px;height:60px;">
+        <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1" Class="my-2" Style="color:white">
+            CREATE OUTLET
+        </RadzenText>
+        <div></div>
+        <RadzenButton Click=@(args => GoBack()) Text="Back" Icon="arrow_back_ios" ButtonStyle="ButtonStyle.Light" />
+    </div>
+    @*Form Create*@
+    <div class="rz-border-info-darker" style="padding:12px">
+        <RadzenFieldset Text="Outlet Info">
+            <div class="row my-2">
+                <div class="col-md-4 align-items-center d-flex">
+                    <RadzenLabel Text="Name" />
+                </div>
+                <div class="col-md-8">
+                    <RadzenTextBox style="width: 100%;" Change=@(args => OnChangeName(args)) />
+                </div>
+            </div>
+            <div class="row my-2">
+                <div class="col-md-4 align-items-center d-flex">
+                    <RadzenLabel Text="Email" />
+                </div>
+                <div class="col-md-8">
+                    <RadzenTextBox style="width: 100%;" Change=@(args => OnChangeEmail(args)) />
+                </div>
+            </div>
+            <div class="row my-2">
+                <div class="col-md-4 align-items-center d-flex">
+                    <RadzenLabel Text="Phone Number" />
+                </div>
+                <div class="col-md-8">
+                    <RadzenTextBox style="width: 100%;" Change=@(args => OnChangePhoneNumber(args)) />
+                </div>
+            </div>
+            <div class="row my-2">
+                <div class="col-md-4 align-items-center d-flex">
+                    <RadzenLabel Text="Location" />
+                </div>
+                <div class="col-md-8">
+                    <RadzenTextBox style="width: 100%;" Change=@(args => OnChangeLocation(args)) />
+                </div>
+            </div>
+            <div class="row my-2">
+                <div class="col-md-4 align-items-center d-flex">
+                    <RadzenLabel Text="Website" />
+                </div>
+                <div class="col-md-8">
+                    <RadzenTextBox style="width: 100%;" Change=@(args => OnChangeWebsite(args)) />
+                </div>
+            </div>
+            <div class="row my-2">
+                <div class="col-md-4 align-items-center d-flex">
+                    <RadzenLabel Text="Description" />
+                </div>
+                <div class="col-md-8">
+                    <RadzenTextBox style="width: 100%;" Change=@(args => OnChangeDescription(args)) />
+                </div>
+            </div>
+            <div class="row my-2">
+                <div class="col-md-4 align-items-center d-flex">
+                    <RadzenLabel Text="Active" />
+                </div>
+                <div class="col-md-8">
+                    <RadzenDropDown AllowClear="true" TValue="string" style="width: 100%;"
+                                    Data=@type
+                                    Change=@(args => OnChangeType(args)) />
+                </div>
+            </div>
+            <RadzenButton class="my-2" Text="Save" Icon="save" ButtonType="ButtonType.Submit" Style="float:right" Click="@(args=>OnSave(model,(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Sucessfully...", Detail = "Outlet was created", Duration = 4000 })))" />
+        </RadzenFieldset>
+    </div>
+
+</div>
+@code{
+    OutletModel model = new OutletModel();
+    List<string> type = new List<string>() { "Active", "Inactive" };
+    private async void GoBack()
+    {
+        await JSRuntime.InvokeVoidAsync("history.back");
+    }
+    //preparing model
+    string OnChangeName(string name) => model.Name = name;
+    string OnChangeEmail(string email) => model.Email = email;
+    string OnChangePhoneNumber(string phoneNumber) => model.PhoneNumber = phoneNumber;
+    string OnChangeLocation(string location) => model.Location = location;
+    string OnChangeWebsite(string website) => model.Website = website;
+    string OnChangeDescription(string desc) => model.Description = desc;
+    bool OnChangeType(object value) => value.ToString() == "Active" ? model.IsDeleted = false : model.IsDeleted = true;
+
+}

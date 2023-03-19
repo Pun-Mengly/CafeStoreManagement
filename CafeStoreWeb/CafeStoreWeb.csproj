@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\images\noddle.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
     <PackageReference Include="Blazored.SessionStorage" Version="2.2.0" />
     <PackageReference Include="BlazorPro.Spinkit" Version="1.2.0" />
@@ -26,11 +30,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CafeStoreManagement\CafeStoreManagement.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Excells\" />
-    <Folder Include="NewFolder\" />
   </ItemGroup>
 
 </Project>

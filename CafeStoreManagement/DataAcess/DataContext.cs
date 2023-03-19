@@ -5,12 +5,13 @@
 using CafeStoreManagement.Models;
 using Microsoft.Extensions.Options;
 
+//Singleton Pattern
 public class DataContext : IdentityDbContext<IdentityUser> //DBContext
     {
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-
+            
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

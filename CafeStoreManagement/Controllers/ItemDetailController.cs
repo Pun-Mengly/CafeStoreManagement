@@ -1,5 +1,6 @@
 ﻿using CafeStoreManagement.Features;
 using CafeStoreManagement.Features.ItemDetail.Response;
+using CafeStoreManagement.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,8 +17,8 @@ namespace CafeStoreManagement.Controllers
         {
             _logic = logic;
         }
-        [HttpPost]
-        public async Task<List<ItemDetailCommand>> post([FromBody] List<ItemDetailCommand> items) => await _logic.PostItemDetail(items);
+        //[HttpPost]
+        //public async Task<List<ItemDetailCommand>> post([FromBody] List<ItemDetailCommand> items) => await _logic.PostItemDetail(items);
         [HttpGet]
         public async Task<IEnumerable<ItemDetailResponse>> get()=> await _logic.GetItemDetail();
 
@@ -26,5 +27,7 @@ namespace CafeStoreManagement.Controllers
 
         [HttpDelete]
         public async Task<Guid> delete(Guid id, bool isDeleted) => await _logic.DeleteItemDetail(id,isDeleted);
+        [HttpPost]
+        public async Task<ItemModel> postV2([FromBody] ItemModel items) => await _logic.postItemV2(items);
     }
 }

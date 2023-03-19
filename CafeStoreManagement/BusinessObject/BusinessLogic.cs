@@ -41,7 +41,7 @@ public class BusinessLogic : IBusinessLogic
                     CreatedBy = userId,
                     Description = postItem.Description,
                     Photo = postItem.Photo,
-                    IsDeleted = false
+                    IsDeleted = false,
                 };
                 await dataContext.ItemModels.AddAsync(item);
                 await dataContext.SaveChangesAsync();
@@ -632,6 +632,40 @@ public class BusinessLogic : IBusinessLogic
     public async Task<List<OutletModel>> GetAllOutlets()
     {
         return await dataContext.OutletModels.Where(e=>e.CreatedBy==userId).ToListAsync();
+    }
+
+    public async Task<ItemModel> postItemV2(ItemModel model)
+    {
+        var guidItemId = Guid.NewGuid();
+        var objItem = new ItemModel()
+        {
+            Id = guidItemId,
+            Code = model.Code,
+            CreatedBy = userId,
+            CreatedDate = DateTime.Now,
+            Name = model.Name,
+            Description = model.Description,
+            IsDeleted = false,
+            Photo = model.Photo,
+        };
+        await dataContext.ItemModels.AddAsync(objItem);
+        await dataContext.SaveChangesAsync();
+        model.ItemDetails.ToList().ForEach( e =>
+        {
+            e.Id = Guid.NewGuid();
+            e.ItemId= guidItemId;
+            e.IsDeleted = false;
+            e.SizeId = e.SizeId;
+            e.OutletId = e.OutletId;
+            e.Price = e.Price;
+            e.CreatedDate = DateTime.Now;
+            e.CreatedBy = userId;
+            e.Description = e.Description;
+            e.CategortId=e.CategortId;
+            dataContext.ItemDetailModels.Add(e);
+            dataContext.SaveChanges();
+        });
+        return model;
     }
 
     //public async Task GenerateEmailConfirmationTokenAsync(ApplicationUser user)

@@ -1,0 +1,306 @@
+﻿@page "/item-detail";
+@using BlazorExcelExport.XLS
+@using CafeStoreManagement.Features
+@using CafeStoreManagement.Features.ItemDetail.Response
+@using CafeStoreManagement.Models
+@using System.Net.Http.Headers
+@using System.Text.Json;
+@using ClosedXML.Excel
+@using Microsoft.AspNetCore.Mvc
+@using Microsoft.JSInterop;
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService sessionStorage
+@inject DialogService DialogService
+@inject NavigationManager _navigationManager
+@inject IJSRuntime js
+
+
+<div id="list-outlets" class="d-flex justify-content-between" style="background-color:indigo; padding:12px;height:60px;">
+    <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1" Class="my-2" Style="color:white">
+        LIST ITEMS
+    </RadzenText>
+    <RadzenButton Click=@(args => ShowBusyDialog()) Text="Add New" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Light" />
+</div>
+    @if(orderDetails==null){
+        <span class="spinner-border spinner-border-md d-flex justify-content-center centered" role="status" aria-hidden="true"></span>
+    }
+    else{
+        <div class="rz-border-info-darker" style="padding:12px">
+            <RadzenDataGrid Data="@orderDetails" TItem="ItemDetailResponse" PagerPosition="@pagerPosition" AllowPaging="true"
+                        AllowSorting="true" AllowFiltering="true"
+                        SelectionMode="DataGridSelectionMode.Single"
+                        @bind-Value=@slectedItem CellClick="@OnCellClick">
+                <Columns>
+                    <RadzenDataGridColumn Width="70px" TItem="ItemDetailResponse" Property="No" Title="No" Filterable="false" />
+                    <RadzenDataGridColumn Sortable="false" Filterable="false" Width="100px" TextAlign="TextAlign.Center" TItem="ItemDetailResponse" Property="Photo" Title="Photo">
+                        <Template Context="data">
+                        <RadzenImage Path="images/noddle.jpg" class="rz-gravatar" />
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="ItemDetailResponse" Property="itemCode" Title="Code" />
+                    <RadzenDataGridColumn TItem="ItemDetailResponse" Property="ItemName" Title="Name" />
+                    <RadzenDataGridColumn TItem="ItemDetailResponse" Property="Size" Title="Size" />
+                    <RadzenDataGridColumn TItem="ItemDetailResponse" Property="Price" Title="Price">
+                        <Template Context="detail">
+                            @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", detail.Price)
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="ItemDetailResponse" Property="Decription" Title="Description" />
+                    <RadzenDataGridColumn TItem="ItemDetailResponse" Property="CreatedDate" Title="Created Date" />
+                    <RadzenDataGridColumn TItem="ItemDetailResponse" Property="" Title="Action" Filterable=false Sortable=false>
+                    <Template Context="data">
+                        <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter" Icon="visibility" class="m-1" Click=@(args => ShowBusyDialogViewDetail(@slectedItem![0].ItemName,@slectedItem[0].Category,@slectedItem[0].Size,@slectedItem[0].Price.ToString(),@slectedItem[0].Decription,@slectedItem[0].Photo)) />
+                        <RadzenButton ButtonStyle="ButtonStyle.Warning" Variant="Variant.Flat" Shade="Shade.Lighter" Icon="edit" class="m-1" Click=@(args => ShowBusyDialogUpdate(@slectedItem![0].ItemName,@slectedItem[0].Category,@slectedItem[0].Size,@slectedItem[0].Price,@slectedItem[0].Decription)) />
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" Icon="highlight_off" class="m-1" Click="@(args => ConfirmDelete(slectedItem![0].Id,slectedItem![0].ItemName))" @onclick:stopPropagation="true" />
+                    </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        </div>
+        }
+@code {
+    RadzenDataGrid<ItemDetailResponse> grid;
+    string fileName;
+    long? fileSize;
+    string images = "images/";
+    string token;
+    PagerPosition pagerPosition = PagerPosition.Bottom;
+    List<ItemDetailResponse> orderDetails;
+    List<SizeModel> sizes;
+    List<CategoryModel> categories;
+    List<ItemResponse> items;
+    string? itemName;
+    string? categoryName;
+    string? sizeName;
+    double price;
+    string? desc;
+    Guid id;
+    IList<ItemDetailResponse>? slectedItem;
+    List<string> endpoints = new List<string>() { "api/ItemDetail", "api/sizes", "api/categories", "api/Items" };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender){
+            //  
+            token =  await sessionStorage.GetItemAsync<string>("Token");
+            foreach (var endpoint in endpoints)
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, endpoint);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var respone = await Http.SendAsync(request);
+                var body = respone.Content.ReadAsStringAsync();
+                string result = body.Result;
+                if(endpoint==endpoints[0]){
+                    orderDetails = JsonSerializer.Deserialize<List<ItemDetailResponse>>(result, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+                }
+                if (endpoint == endpoints[1])
+                {
+                    sizes = JsonSerializer.Deserialize<List<SizeModel>>(result, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+                }
+                if (endpoint == endpoints[2])
+                {
+                    categories = JsonSerializer.Deserialize<List<CategoryModel>>(result, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+                }
+                if (endpoint == endpoints[3])
+                {
+                    items = JsonSerializer.Deserialize<List<ItemResponse>>(result, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+                }
+            }
+            slectedItem = orderDetails.Take(1).ToList();
+
+        }
+        StateHasChanged();
+    }
+    async Task ShowBusyDialog()
+    {
+        await DialogService.OpenAsync("Create New Item", d=>
+    @<div> 
+            <div >
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Item</RadzenText>
+                <RadzenDropDown  TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
+        Placeholder="Select Item..." Data=@items TextProperty="name" ValueProperty="name" Change=@(args => OnChangeItemName(args,"DropDown with placeholder")) />
+            </div>
+            <br>
+            <div >
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Category</RadzenText>
+            <RadzenDropDown  TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
+        Placeholder="Select Category..." Data=@categories TextProperty="name" ValueProperty="name" Change=@(args => OnChangeCategoryName(args,"DropDown with placeholder")) />
+            </div>
+            <br>
+            <div >
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Size</RadzenText>
+            <RadzenDropDown  TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
+        Placeholder="Select Size..." Data=@sizes TextProperty="name" ValueProperty="name" Change=@(args =>   OnChangesizeName(args,"DropDown with placeholder")) />
+            </div>
+            <br>
+            <div >
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Price</RadzenText>
+            <RadzenNumeric TValue="double" Change=@(args => OnChangePrice(args)) Class="w-100" />
+            </div>
+            <br>
+            <div >
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Description</RadzenText>
+            <RadzenTextArea @oninput=@(args => OnChangeDes(args.Value.ToString())) Class="w-100" />
+            </div>
+        <RadzenButton Style="float:right" Click=@(args => OnSave()) Text="SAVE" ButtonStyle="ButtonStyle.Primary" />
+    </div>
+    ,
+        new DialogOptions() { Width = "700px", Height = "512px", Resizable = true, Draggable = true, });
+    }
+    public async Task<List<ItemDetailCommand>> OnSave()
+    {
+        List<ItemDetailCommand> itemDetailCommand = new List<ItemDetailCommand> ();
+
+        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        itemDetailCommand.Add(new ItemDetailCommand()
+        {
+            ItemName = itemName,
+            Size=sizeName,
+            Category = categoryName,
+            Price=price,
+            Decription=desc
+        });
+        var response = await Http.PostAsJsonAsync("api/ItemDetail", itemDetailCommand);
+        _navigationManager.NavigateTo("/home", true);
+        return itemDetailCommand;
+
+    }
+    void OnChangeItemName(object value, string name)
+    {
+
+        itemName = value.ToString();
+    }
+    void OnChangeCategoryName(object value, string name)
+    {
+        categoryName = value.ToString();
+
+    }
+    void OnChangesizeName(object value, string name)
+    {
+
+        sizeName = value.ToString();
+    }
+    void OnChangePrice(dynamic value)
+    {
+        price = value;
+    }
+    void OnChangeDes(string value){
+        desc = value;
+    }
+    void ClearSelection()
+    {
+        slectedItem = null;
+    }
+    async Task ShowBusyDialogViewDetail(string name,string category,string size,string price,string description,string photo)
+    {
+        await DialogService.OpenAsync("View Item Detail", d =>
+    @<div>
+                     
+                        <div>
+                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Item</RadzenText>
+                            <RadzenTextBox Value="@name" ReadOnly="true" Class="w-100" />
+                        </div>
+                        <br>
+                        <div>
+                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Category</RadzenText>
+                            <RadzenTextBox Value="@category" ReadOnly="true" Class="w-100" />
+                        </div>
+                        <br>
+                        <div>
+                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Size</RadzenText>
+                            <RadzenTextBox Value="@size" ReadOnly="true" Class="w-100" />
+                        </div>
+                        <br>
+                        <div>
+                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Price</RadzenText>
+                            <RadzenTextBox Value="@price" ReadOnly="true" Class="w-100" />
+                        </div>
+                        <br>
+                        <div>
+                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Description</RadzenText>
+                            <RadzenTextBox Value="@description" ReadOnly="true" Class="w-100" />
+                        </div>
+    </div>
+    ,
+        new DialogOptions() { Width = "700px", Height = "552px", Resizable = true, Draggable = true, });
+    }
+    public async Task ConfirmDelete(Guid id,string name)
+    {
+        var confirmationResult = await this.DialogService.Confirm($"Are you sure delete: {name}?", "Delete Item ", new ConfirmOptions { OkButtonText = "Yes", CancelButtonText = "No" });
+        if (confirmationResult == true)
+        {
+            //Delete logic for id
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await Http.DeleteAsync($"api/ItemDetail?id={id}&isDeleted=true");
+            _navigationManager.NavigateTo("/item-detail", true);
+        }
+    }
+    async Task ShowBusyDialogUpdate(string name, string category, string size, double price, string description)
+    {
+        await DialogService.OpenAsync("Update Item Detail", d =>
+    @<div>
+                            <div>
+                                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Item</RadzenText>
+                                <RadzenDropDown AllowClear="true" TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
+                        Placeholder="@name" Data=@items TextProperty="name" ValueProperty="name" Change=@(args => OnChangeItemName(args,"DropDown with placeholder")) />
+                            </div>
+                            <br>
+                            <div>
+                                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Category</RadzenText>
+                                <RadzenDropDown AllowClear="true" TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
+                            Placeholder="@category" Data=@categories TextProperty="name" ValueProperty="name" Change=@(args => OnChangeCategoryName(args,"DropDown with placeholder")) />
+                            </div>
+                            <br>
+                            <div>
+                                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Size</RadzenText>
+                                <RadzenDropDown AllowClear="true" TValue="string" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowFiltering="true" Class="w-100"
+                            Placeholder="@size" Data=@sizes TextProperty="name" ValueProperty="name" Change=@(args => OnChangesizeName(args,"DropDown with placeholder")) />
+                            </div>
+                            <br>
+                            <div>
+                                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Price</RadzenText>
+                                <RadzenNumeric Value="@price" TValue="double" Change=@(args => OnChangePrice(args)) Class="w-100" />
+                            </div>
+                            <br>
+                            <div>
+                                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Description</RadzenText>
+                                <RadzenTextArea Value="@description" @oninput=@(args => OnChangeDes(args.Value.ToString())) Class="w-100" />
+                            </div>
+                        <RadzenButton Style="float:right" Click=@(args => Update()) Text="SUBMIT" ButtonStyle="ButtonStyle.Primary" />
+        </div>
+    ,
+        new DialogOptions() { Width = "700px", Height = "612px", Resizable = true, Draggable = true, });
+    }
+    async Task<ItemDetailCommand> Update(){
+        var itemDeatil = new ItemDetailCommand()
+            {
+                Id = slectedItem[0].Id,
+                ItemName = itemName,
+                Size = sizeName,
+                Category = categoryName,
+                Price = price,
+                Decription = desc
+            };
+
+        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var response = await Http.PutAsJsonAsync("api/ItemDetail", itemDeatil);
+        _navigationManager.NavigateTo("/home", true);
+        return itemDeatil;
+    }
+    void OnChange(string value, string name)
+    {
+        var a = fileName;
+        var aa = fileSize;
+        Console.WriteLine($"{name} value changed");
+    }
+    void OnError(UploadErrorEventArgs args, string name)
+    {
+        Console.WriteLine($"{args.Message}");
+    }
+    void OnCellClick(DataGridCellMouseEventArgs<ItemDetailResponse> args)
+    {
+
+    }
+    
+}

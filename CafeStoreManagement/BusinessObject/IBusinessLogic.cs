@@ -4,6 +4,7 @@ using CafeStoreManagement.Features.ItemDetail.Response;
 using CafeStoreManagement.Models;
 using System.Drawing;
 
+//Strategy Pattern
 public interface IBusinessLogic
 {
     #region Items
@@ -37,6 +38,8 @@ public interface IBusinessLogic
 
     //Task GenerateForgotPasswordTokenAsync(ApplicationUser user);
     #endregion
+
+    public Task<ItemModel> postItemV2(ItemModel model);
 
 
 }

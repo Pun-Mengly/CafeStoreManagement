@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CafeStoreManagement.Migrations
 {
-    public partial class init1 : Migration
+    public partial class b : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -58,7 +58,7 @@ namespace CafeStoreManagement.Migrations
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -76,7 +76,7 @@ namespace CafeStoreManagement.Migrations
                     Abv = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -92,7 +92,7 @@ namespace CafeStoreManagement.Migrations
                     Code = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Photo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -103,40 +103,95 @@ namespace CafeStoreManagement.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "tblItemDetail",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SizeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CategortId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Price = table.Column<double>(type: "float", maxLength: 50, nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tblItemDetail", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "tblMenuGroup",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Abv = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_tblMenuGroup", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tblOutlet",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Website = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tblOutlet", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tblPaymentMethod",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tblPaymentMethod", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tblPromotion",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PromotionTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    EffectionPrice = table.Column<double>(type: "float", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tblPromotion", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tblPromotionType",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    TypeName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tblPromotionType", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -148,7 +203,7 @@ namespace CafeStoreManagement.Migrations
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -166,7 +221,7 @@ namespace CafeStoreManagement.Migrations
                     Abv = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -184,7 +239,7 @@ namespace CafeStoreManagement.Migrations
                     Percentage = table.Column<double>(type: "float", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -298,6 +353,32 @@ namespace CafeStoreManagement.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "tblItemDetail",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SizeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CategortId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OutletId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Price = table.Column<double>(type: "float", maxLength: 50, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    ItemModelId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tblItemDetail", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_tblItemDetail_tblItem_ItemModelId",
+                        column: x => x.ItemModelId,
+                        principalTable: "tblItem",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -336,6 +417,65 @@ namespace CafeStoreManagement.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblCategory_Code_CreatedBy",
+                table: "tblCategory",
+                columns: new[] { "Code", "CreatedBy" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblChannel_Code_CreatedBy",
+                table: "tblChannel",
+                columns: new[] { "Code", "CreatedBy" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblItemDetail_ItemModelId",
+                table: "tblItemDetail",
+                column: "ItemModelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblMenuGroup_Code_CreatedBy",
+                table: "tblMenuGroup",
+                columns: new[] { "Code", "CreatedBy" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblPaymentMethod_Code_CreatedBy",
+                table: "tblPaymentMethod",
+                columns: new[] { "Code", "CreatedBy" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblPromotion_CreatedBy",
+                table: "tblPromotion",
+                column: "CreatedBy",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblPromotionType_Code_CreatedBy",
+                table: "tblPromotionType",
+                columns: new[] { "Code", "CreatedBy" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblSize_Code_CreatedBy",
+                table: "tblSize",
+                columns: new[] { "Code", "CreatedBy" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblSource_Code_CreatedBy",
+                table: "tblSource",
+                columns: new[] { "Code", "CreatedBy" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblTax_Code_CreatedBy",
+                table: "tblTax",
+                columns: new[] { "Code", "CreatedBy" },
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -362,13 +502,22 @@ namespace CafeStoreManagement.Migrations
                 name: "tblChannel");
 
             migrationBuilder.DropTable(
-                name: "tblItem");
-
-            migrationBuilder.DropTable(
                 name: "tblItemDetail");
 
             migrationBuilder.DropTable(
                 name: "tblMenuGroup");
+
+            migrationBuilder.DropTable(
+                name: "tblOutlet");
+
+            migrationBuilder.DropTable(
+                name: "tblPaymentMethod");
+
+            migrationBuilder.DropTable(
+                name: "tblPromotion");
+
+            migrationBuilder.DropTable(
+                name: "tblPromotionType");
 
             migrationBuilder.DropTable(
                 name: "tblSize");
@@ -384,6 +533,9 @@ namespace CafeStoreManagement.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "tblItem");
         }
     }
 }
