@@ -5,6 +5,7 @@
         public Guid Id { get; set; }
         public int No { get; set; }
         public string ItemName { get; set; }
+        public string OutletName { get; set; }
         public string itemCode { get; set; }
         public string Size { get; set; }
         public string Category { get; set; }

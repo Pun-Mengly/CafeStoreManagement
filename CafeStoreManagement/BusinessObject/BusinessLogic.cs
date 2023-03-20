@@ -492,12 +492,14 @@ public class BusinessLogic : IBusinessLogic
         var items = await dataContext.ItemModels.ToListAsync();
         var sizes = await dataContext.SizeModels.ToListAsync();
         var categories = await dataContext.CategoryModels.ToListAsync();
+        var outlets = await dataContext.OutletModels.ToListAsync();
         int i = 1;
         foreach (var itemDetail in itemDetails)
         {
             var item = items.Where(e => e.Id == itemDetail.ItemId && e.CreatedBy==itemDetail.CreatedBy).FirstOrDefault();
             var size = sizes.Where(e => e.Id == itemDetail.SizeId && e.CreatedBy == itemDetail.CreatedBy).FirstOrDefault();
             var category = categories.Where(e => e.Id == itemDetail.CategortId && e.CreatedBy == itemDetail.CreatedBy).FirstOrDefault();
+            var outlet = outlets.Where(e => e.Id == itemDetail.OutletId && e.CreatedBy == itemDetail.CreatedBy).FirstOrDefault();
             var itemDetailResponse = new ItemDetailResponse()
             {
                 No=i++,
@@ -510,6 +512,7 @@ public class BusinessLogic : IBusinessLogic
                 CreatedDate=itemDetail.CreatedDate,
                 Category=category!.Name,
                 Size=size!.Name,
+                OutletName= outlet!.Name,
                 IsDeleted=itemDetail.IsDeleted,
             };
             itemDetailResponses.Add(itemDetailResponse);

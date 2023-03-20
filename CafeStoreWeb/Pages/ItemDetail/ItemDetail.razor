@@ -15,11 +15,12 @@
 @inject IJSRuntime js
 
 
+
 <div id="list-outlets" class="d-flex justify-content-between" style="background-color:indigo; padding:12px;height:60px;">
     <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1" Class="my-2" Style="color:white">
         LIST ITEMS
     </RadzenText>
-    <RadzenButton Click=@(args => ShowBusyDialog()) Text="Add New" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Light" />
+    <RadzenButton Click=@(args => GoToCreate()) Text="Add New" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Light" />
 </div>
     @if(orderDetails==null){
         <span class="spinner-border spinner-border-md d-flex justify-content-center centered" role="status" aria-hidden="true"></span>
@@ -46,6 +47,7 @@
                         </Template>
                     </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="ItemDetailResponse" Property="Decription" Title="Description" />
+                <RadzenDataGridColumn TItem="ItemDetailResponse" Property="OutletName" Title="Outlet" />
                     <RadzenDataGridColumn TItem="ItemDetailResponse" Property="CreatedDate" Title="Created Date" />
                     <RadzenDataGridColumn TItem="ItemDetailResponse" Property="" Title="Action" Filterable=false Sortable=false>
                     <Template Context="data">
@@ -301,6 +303,10 @@
     void OnCellClick(DataGridCellMouseEventArgs<ItemDetailResponse> args)
     {
 
+    }
+    private void GoToCreate()
+    {
+        _navigationManager.NavigateTo("/item-detail/create");
     }
     
 }

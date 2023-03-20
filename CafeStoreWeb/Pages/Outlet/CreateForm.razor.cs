@@ -1,9 +1,7 @@
-﻿using Blazored.LocalStorage;
+﻿
 using CafeStoreManagement.Models;
-using Microsoft.AspNetCore.Components;
 using Radzen;
 using System.Net.Http.Headers;
-using System.Text.Json;
 
 
 namespace CafeStoreWeb.Pages.Outlet
@@ -24,7 +22,7 @@ namespace CafeStoreWeb.Pages.Outlet
             if ((int)response.StatusCode == 200)
             {
                 NotificationService.Notify(message);
-                //Navigation.NavigateTo("outlet");
+                Navigation.NavigateTo("outlet");
             }  
         }
     }

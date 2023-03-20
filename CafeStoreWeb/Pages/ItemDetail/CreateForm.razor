@@ -1,0 +1,249 @@
+﻿@page "/item-detail/create";
+@using CafeStoreManagement.Features.ItemDetail.Response;
+@using CafeStoreManagement.Models;
+@inject HttpClient Http;
+@inject Blazored.LocalStorage.ILocalStorageService sessionStorage;
+@inject IJSRuntime JSRuntime;
+@inject NavigationManager Navigation;
+@inject NotificationService NotificationService
+<div>
+    <div id="create-outlets" class="d-flex justify-content-between" style="background-color:indigo; padding:12px;height:60px;">
+        <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1" Class="my-2" Style="color:white">
+            CREATE ITEM
+        </RadzenText>
+        <div></div>
+        <RadzenButton Click=@(args => GoBack()) Text="Back" Icon="arrow_back_ios" ButtonStyle="ButtonStyle.Light" />
+    </div>
+    @*Form Create*@
+    <div class="rz-border-info-darker" style="padding:12px">
+        <RadzenSteps Change=@OnChange>
+             <Steps>  
+                 <RadzenStepsItem Text="Create Item">
+                    <RadzenFieldset Text="Item Info">
+                        <RadzenCard>
+                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Image</RadzenText>
+                            <RadzenFileInput @bind-FileName=fileName TValue="string" Class="w-100"
+                                             Change=@(args => OnChangeImage(args, "FileInput")) Error=@(args => OnError(args, "FileInput")) />
+                        </RadzenCard>
+                        <div class="row my-2">
+                            <div class="col-md-4 align-items-center d-flex">
+                                <RadzenLabel Text="Name" />
+                            </div>
+                            <div class="col-md-8">
+                                <RadzenTextBox style="width: 100%;" Change=@(args => OnChangeName(args)) />
+                            </div>
+                        </div>
+                        <div class="row my-2">
+                            <div class="col-md-4 align-items-center d-flex">
+                                <RadzenLabel Text="Code" />
+                            </div>
+                            <div class="col-md-8">
+                                <RadzenTextBox style="width: 100%;" Change=@(args => OnChangeCode(args)) />
+                            </div>
+                        </div>
+                        <div class="row my-2">
+                            <div class="col-md-4 align-items-center d-flex">
+                                <RadzenLabel Text="Description" />
+                            </div>
+                            <div class="col-md-8">
+                                <RadzenTextBox style="width: 100%;" Change=@(args => OnChangeDescriptionItem(args)) />
+                            </div>
+                        </div>
+                    </RadzenFieldset>
+                 </RadzenStepsItem>
+                 <RadzenStepsItem Text="Set Price" >
+                    <RadzenFieldset Text="ITEM CONFIGURATION">
+                        <div class="d-flex justify-content-between">
+                            <div></div>
+                            <div></div>
+                                <RadzenButton Click=@(args => AddMorePrice()) Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
+                        </div>
+                        <div class="row my-2">
+                            <div class="col-md-4 align-items-center d-flex">
+                                <RadzenLabel Text="Price" />
+                            </div>
+                            <div class="col-md-8">
+                                <RadzenNumeric style="width: 100%;" @bind-Value=@price />
+                            </div>
+                        </div>
+                        <div class="row my-2">
+                            <div class="col-md-4 align-items-center d-flex">
+                                <RadzenLabel Text="Category" />
+                            </div>
+                            <div class="col-md-8">
+                                <RadzenDropDown TValue="string" style="width: 100%;"
+                                                Data=@categories.Select(e=>e.Name).ToList()
+                                                Change=@(args => OnChangeCategory(args)) 
+                                                @bind-Value="clearCategory"/>
+                            </div>
+                        </div>
+                        <div class="row my-2">
+                            <div class="col-md-4 align-items-center d-flex">
+                                <RadzenLabel Text="Size" />
+                            </div>
+                            <div class="col-md-8">
+                                <RadzenDropDown TValue="string" style="width: 100%;"
+                                                Data=@sizes.Select(e=>e.Name).ToList()
+                                                Change=@(args => OnChangeSize(args)) 
+                                                @bind-Value="clearSize" />
+                            </div>
+                        </div>
+                        <div class="row my-2">
+                            <div class="col-md-4 align-items-center d-flex">
+                                <RadzenLabel Text="Outlet" />
+                            </div>
+                            <div class="col-md-8">
+                                <RadzenDropDown TValue="string" style="width: 100%;"
+                                                Data=@outlets.Select(e=>e.Name).ToList()
+                                                Change=@(args =>OnChangeOutlet(args)) 
+                                                @bind-Value="clearOutlet" />
+                            </div>
+                        </div>
+                        <div class="row my-2">
+                            <div class="col-md-4 align-items-center d-flex">
+                                <RadzenLabel Text="Decription" />
+                            </div>
+                            <div class="col-md-8">
+                                <RadzenTextBox style="width: 100%;"
+                                               @bind-Value="descItemDetail" />
+                                
+                            </div>
+                        </div>
+                    </RadzenFieldset>
+                    @foreach (var i in itemDetails)
+                    {
+                        <RadzenFieldset Text="@String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", i.Price)">
+                            <div class="d-flex justify-content-between">
+                                <div></div>
+                                <div></div>
+                                <div>
+                                    <RadzenButton Click=@(args => RemovePrice(i)) Icon="highlight_off" ButtonStyle="ButtonStyle.Danger" />
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-4 align-items-center d-flex">
+                                    <RadzenLabel Text="Price" />
+                                </div>
+                                <div class="col-md-8">
+                                    <RadzenNumeric style="width: 100%;" Disabled @bind-Value=@(i.Price)/>
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-4 align-items-center d-flex">
+                                    <RadzenLabel Text="Category" />
+                                </div>
+                                <div class="col-md-8">
+                                    <RadzenDropDown TValue="string" style="width: 100%;"
+                                                Placeholder=@(categories.Where(e=>e.Id==i.CategortId).Select(e=>e.Name).FirstOrDefault()) Disabled/>
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-4 align-items-center d-flex">
+                                    <RadzenLabel Text="Size" />
+                                </div>
+                                <div class="col-md-8">
+                                    <RadzenDropDown TValue="string" style="width: 100%;"
+                                                Placeholder=@(sizes.Where(e=>e.Id==i.SizeId).Select(e=>e.Name).FirstOrDefault()) Disabled />
+
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-4 align-items-center d-flex">
+                                    <RadzenLabel Text="Outlet" />
+                                </div>
+                                <div class="col-md-8">
+                                    <RadzenDropDown TValue="string" style="width: 100%;"
+                                                Placeholder=@(outlets.Where(e=>e.Id==i.OutletId).Select(e=>e.Name).FirstOrDefault()) Disabled />
+
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-4 align-items-center d-flex">
+                                    <RadzenLabel Text="Decription" />
+                                </div>
+                                <div class="col-md-8">
+                                    <RadzenTextBox style="width: 100%;"
+                                               @bind-Value=i.Description Disabled />
+                                </div>
+                            </div>
+                        </RadzenFieldset>
+                    }
+                    
+                    <RadzenButton class="my-2" Text="Save" Icon="save" ButtonType="ButtonType.Submit" Style="float:right" Click="@(args=>OnSave(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Sucessfully...", Detail = "Item was created", Duration = 4000 }))" />
+                 </RadzenStepsItem>
+             </Steps>
+        </RadzenSteps>
+    </div>  
+</div>
+@code {
+    List<ItemDetailResponse> orderDetails;
+    string fileName;
+    long? fileSize;
+    double price;
+    Guid sizeId;
+    Guid outletId;
+    Guid categoryId;
+    string descItemDetail;
+    string clearCategory;
+    string clearSize;
+    string clearOutlet;
+    private async void GoBack()
+    {
+        await JSRuntime.InvokeVoidAsync("history.back");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Sizes();
+        await Categories();
+        await Outlets();
+        await base.OnInitializedAsync();
+    }
+    void OnChange(int index)
+    {
+        Console.WriteLine($"Step with index {index} was selected.");
+    }
+    //preparing model
+    void OnError(UploadErrorEventArgs args, string name)
+    {
+        Console.WriteLine($"{args.Message}");
+    }
+    //Item Model
+    void OnChangeImage(string value, string name)
+    {
+        model.Photo = fileName;
+    }
+    string OnChangeName(string name) => model.Name = name;
+    string OnChangeCode(string code) => model.Code = code;
+    string OnChangeDescriptionItem(string desc) => model.Description = desc;
+    //End Item Model
+
+    //Item Detail Model
+
+    void OnChangeSize(object size) {sizeId= sizes.Where(e => e.Name == size.ToString()).Select(e => e.Id).FirstOrDefault(); }
+    void OnChangeOutlet(object outlet) {outletId= outlets.Where(e => e.Name == outlet.ToString()).Select(e => e.Id).FirstOrDefault(); }
+    void OnChangeCategory(object category) { categoryId = categories.Where(e => e.Name == category.ToString()).Select(e => e.Id).FirstOrDefault(); }
+
+    void AddMorePrice()
+    {
+        var itemDetail=new ItemDetailModel();
+        itemDetail.Price = price;
+        itemDetail.SizeId = sizeId;
+        itemDetail.CategortId = categoryId;
+        itemDetail.OutletId = outletId;
+        itemDetail.Description = descItemDetail;
+        //Add to temp data
+        itemDetails.Add(itemDetail);
+        //Clear Fields
+        price = 0;
+        clearCategory = "";
+        clearSize = "";
+        clearOutlet = "";
+        descItemDetail = "";
+
+    }
+    void RemovePrice(ItemDetailModel index)
+    {
+        itemDetails.Remove(index);
+    }
+}
