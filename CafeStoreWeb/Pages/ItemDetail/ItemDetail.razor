@@ -35,7 +35,7 @@
                     <RadzenDataGridColumn Width="70px" TItem="ItemDetailResponse" Property="No" Title="No" Filterable="false" />
                     <RadzenDataGridColumn Sortable="false" Filterable="false" Width="100px" TextAlign="TextAlign.Center" TItem="ItemDetailResponse" Property="Photo" Title="Photo">
                         <Template Context="data">
-                        <RadzenImage Path="images/noddle.jpg" class="rz-gravatar" />
+                        <RadzenImage Path=@data.Photo class="rz-gravatar" />
                         </Template>
                     </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="ItemDetailResponse" Property="itemCode" Title="Code" />

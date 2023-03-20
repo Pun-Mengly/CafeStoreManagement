@@ -53,11 +53,7 @@
                  </RadzenStepsItem>
                  <RadzenStepsItem Text="Set Price" >
                     <RadzenFieldset Text="ITEM CONFIGURATION">
-                        <div class="d-flex justify-content-between">
-                            <div></div>
-                            <div></div>
-                                <RadzenButton Click=@(args => AddMorePrice()) Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
-                        </div>
+                       
                         <div class="row my-2">
                             <div class="col-md-4 align-items-center d-flex">
                                 <RadzenLabel Text="Price" />
@@ -109,67 +105,39 @@
                                 
                             </div>
                         </div>
+                        <div class="d-flex justify-content-between">
+                            <div></div>
+                            <div></div>
+                            <RadzenButton Click=@(args => AddMorePrice()) Text="Save" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
+                        </div>
                     </RadzenFieldset>
-                    @foreach (var i in itemDetails)
+                    <div class="rz-border-info-darker" style="padding:12px">
+                        <table>
+                            <tr>
+                                <th>Outlet</th>
+                                <th>Category</th>
+                                <th>Size</th>
+                                <th>Price</th>
+                                <th>Decription</th>
+                                <th>Action</th>
+                            </tr>
+                            @foreach (var item in itemDetails)
+                            {
+                                <tr>
+                                    <td>@(outlets.Where(e => e.Id == item.OutletId).Select(e => e.Name).FirstOrDefault())</td>
+                                    <td>@(categories.Where(e => e.Id == item.CategortId).Select(e => e.Name).FirstOrDefault())</td>
+                                    <td>@(sizes.Where(e => e.Id == item.SizeId).Select(e => e.Name).FirstOrDefault())</td>
+                                    <td>@item.Price</td>
+                                    <td>@item.Description</td>
+                                    <td> <RadzenButton Click=@(args => RemovePrice(item)) Variant="Variant.Flat" Shade="Shade.Lighter" Icon="highlight_off" ButtonStyle="ButtonStyle.Danger" /></td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                    @if (itemDetails.Count > 0)
                     {
-                        <RadzenFieldset Text="@String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", i.Price)">
-                            <div class="d-flex justify-content-between">
-                                <div></div>
-                                <div></div>
-                                <div>
-                                    <RadzenButton Click=@(args => RemovePrice(i)) Icon="highlight_off" ButtonStyle="ButtonStyle.Danger" />
-                                </div>
-                            </div>
-                            <div class="row my-2">
-                                <div class="col-md-4 align-items-center d-flex">
-                                    <RadzenLabel Text="Price" />
-                                </div>
-                                <div class="col-md-8">
-                                    <RadzenNumeric style="width: 100%;" Disabled @bind-Value=@(i.Price)/>
-                                </div>
-                            </div>
-                            <div class="row my-2">
-                                <div class="col-md-4 align-items-center d-flex">
-                                    <RadzenLabel Text="Category" />
-                                </div>
-                                <div class="col-md-8">
-                                    <RadzenDropDown TValue="string" style="width: 100%;"
-                                                Placeholder=@(categories.Where(e=>e.Id==i.CategortId).Select(e=>e.Name).FirstOrDefault()) Disabled/>
-                                </div>
-                            </div>
-                            <div class="row my-2">
-                                <div class="col-md-4 align-items-center d-flex">
-                                    <RadzenLabel Text="Size" />
-                                </div>
-                                <div class="col-md-8">
-                                    <RadzenDropDown TValue="string" style="width: 100%;"
-                                                Placeholder=@(sizes.Where(e=>e.Id==i.SizeId).Select(e=>e.Name).FirstOrDefault()) Disabled />
-
-                                </div>
-                            </div>
-                            <div class="row my-2">
-                                <div class="col-md-4 align-items-center d-flex">
-                                    <RadzenLabel Text="Outlet" />
-                                </div>
-                                <div class="col-md-8">
-                                    <RadzenDropDown TValue="string" style="width: 100%;"
-                                                Placeholder=@(outlets.Where(e=>e.Id==i.OutletId).Select(e=>e.Name).FirstOrDefault()) Disabled />
-
-                                </div>
-                            </div>
-                            <div class="row my-2">
-                                <div class="col-md-4 align-items-center d-flex">
-                                    <RadzenLabel Text="Decription" />
-                                </div>
-                                <div class="col-md-8">
-                                    <RadzenTextBox style="width: 100%;"
-                                               @bind-Value=i.Description Disabled />
-                                </div>
-                            </div>
-                        </RadzenFieldset>
+                        <RadzenButton class="my-2" Text="SUBMIT" Icon="save" ButtonType="ButtonType.Submit" Style="float:right" Click="@(args=>OnSave(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Sucessfully...", Detail = "Item was created", Duration = 4000 }))" />
                     }
-                    
-                    <RadzenButton class="my-2" Text="Save" Icon="save" ButtonType="ButtonType.Submit" Style="float:right" Click="@(args=>OnSave(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Sucessfully...", Detail = "Item was created", Duration = 4000 }))" />
                  </RadzenStepsItem>
              </Steps>
         </RadzenSteps>
@@ -211,7 +179,7 @@
     //Item Model
     void OnChangeImage(string value, string name)
     {
-        model.Photo = fileName;
+        model.Photo = "images/"+fileName;
     }
     string OnChangeName(string name) => model.Name = name;
     string OnChangeCode(string code) => model.Code = code;

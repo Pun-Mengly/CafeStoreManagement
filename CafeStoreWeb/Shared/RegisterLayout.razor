@@ -43,15 +43,8 @@
             <RadzenButton Style="float:right" Text="SUBMIT" ButtonStyle="ButtonStyle.Primary"
                           Click="@OnRegister" />
         @if(isLoading){
-                <Fold Color="@color" style="
-                            position: absolute;
-                            top: 50%;
-                            left: 50%;
-                            margin-top: -50px;
-                            margin-left: -50px;
-                            width: 46px;
-                            height: 46px;" 
-                    />
+            <span class="spinner-border spinner-border-md d-flex justify-content-center centered" role="status" aria-hidden="true"></span>
+
         }      
         </RadzenCard>
     </RadzenCard>
