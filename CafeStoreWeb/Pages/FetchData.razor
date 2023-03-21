@@ -1,7 +1,8 @@
 ﻿@page "/fetchdata";
 @using CafeStoreWeb.Data;
 @using Microsoft.EntityFrameworkCore;
-<RadzenText Text="Receipt Report" 
+@inject IJSRuntime JSRunTime
+<RadzenText Text="Receipt Report"  id="text-header"
     TextStyle="TextStyle.H2" 
     Style="background-color:indigo; color:white;padding:12px"></RadzenText>
 @if (employees is null)
@@ -11,13 +12,15 @@
 }
 else
 {
+    <RadzenButton Text="Export XLS" Icon="grid_on" Click="@(args => Export())" class="mb-4 me-2" />
+
     <div class="rz-border-info-darker" style="padding:12px">
-        <RadzenDataGrid @ref=grid AllowGrouping="true" AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" PageSize="10" AllowPaging="true" AllowSorting="true"
+        <RadzenDataGrid id="table-export" @ref=grid AllowGrouping="true" AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" PageSize="10" AllowPaging="true" AllowSorting="true"
                     Data="@employees" TItem="ReceiptReportModel" ColumnWidth="160px" LogicalFilterOperator="LogicalFilterOperator.Or" Render="@OnRender"
                     HideGroupedColumn="true" GroupRowRender="OnGroupRowRender" GroupRowExpand="OnGroupRowExpand" GroupRowCollapse="OnGroupRowCollapse" Group="@OnGroup"
                     @bind-AllGroupsExpanded="@allGroupsExpanded">
             <Columns>
-                <RadzenDataGridColumn TItem="ReceiptReportModel" Property="ReceiptId" Filterable="false" Title="ID" Frozen="true" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="ReceiptReportModel" Property="ReceiptId" Filterable="false" Title="Receipt Id" Frozen="true" TextAlign="TextAlign.Center" />
                 <RadzenDataGridColumn TItem="ReceiptReportModel" Property="ItemId" Title="Item" />
                 <RadzenDataGridColumn TItem="ReceiptReportModel" Property="UnitPrice" Title="Unit Price">
                     <Template Context="detail">
@@ -111,5 +114,9 @@ else
                     Total = qty * price
                 });
         }
+    }
+    public async Task Export()
+    {
+        await JSRunTime.InvokeAsync<string>("ExportEcell");
     }
 }

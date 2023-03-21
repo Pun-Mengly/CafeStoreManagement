@@ -14,7 +14,7 @@ namespace CafeStoreWeb
 
         public void Export(string table, string type, Query query = null)
         {
-            navigationManager.NavigateTo(query != null ? query.ToUrl($"/export/northwind/{table}.{type}") : $"/export/northwind/{table}.{type}", true);
+            navigationManager.NavigateTo(query != null ? query.ToUrl($"/export/northwind/{table}/{type}") : $"/export/northwind/{table}/{type}", true);
         }
     }
 }

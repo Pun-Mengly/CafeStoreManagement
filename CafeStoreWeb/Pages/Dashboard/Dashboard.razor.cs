@@ -1,6 +1,6 @@
 ﻿
 using System.Globalization;
-namespace CafeStoreWeb.Pages;
+namespace CafeStoreWeb.Pages.Dashboard;
 
 public partial class Dashboard
 {

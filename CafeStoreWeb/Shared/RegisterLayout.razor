@@ -78,21 +78,6 @@
         isLoading = false;
     }
 
-    private void NavigateToCounterComponent()
-    {
-        Navigation.NavigateTo("counter");
-    }
-    void OnLogin(LoginArgs args, string name)
-    {
-
-        if (args.Username == userName && args.Password == password)
-        {
-            Navigation.NavigateTo("");
-        }
-
-    }
-
-
     async Task<string> OnRegister()
     {
         isLoading = true;
@@ -111,7 +96,7 @@
                 Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var resultInit = await Http.GetAsync("api/Initailizataion");
                 if(resultInit.IsSuccessStatusCode){
-                    _navigationManager.NavigateTo("/", true);
+                    _navigationManager.NavigateTo("/login", true);
                 }
                 else{
                     color = "#F70000";
