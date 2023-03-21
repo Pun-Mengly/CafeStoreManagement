@@ -3,6 +3,7 @@
 
 
 using CafeStoreManagement.Models;
+using CafeStoreWeb.Data;
 using Microsoft.Extensions.Options;
 
 //Singleton Pattern
@@ -34,6 +35,7 @@ public class DataContext : IdentityDbContext<IdentityUser> //DBContext
         public DbSet<CategoryModel> CategoryModels { get; set; }
         public DbSet<SizeModel> SizeModels { get; set; }
         public DbSet<OutletModel> OutletModels { get; set; }
+        public DbSet<OrderModel> ReceiptReportModels { get; set; }
         //public DbSet<PromotionModel> PromotionModels { get; set; }
         //public DbSet<PromotionTypeModel> PromotionTypeModels { get; set; }
         //public DbSet<PaymentMethodModel> PaymentMethodModels { get; set; }

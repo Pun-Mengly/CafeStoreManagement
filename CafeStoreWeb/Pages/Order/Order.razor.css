@@ -1,0 +1,40 @@
+﻿.split-screen {
+    display: flex;
+    height: 85vh; /* set the height of the container to full viewport height */
+}
+
+.left-panel,
+.right-panel {
+    height: 100%; /* set the height of both panels to full container height */
+}
+
+.left-panel {
+    flex:3;
+    background-color: #eee; /* set background color for left panel */
+}
+
+.right-panel {
+    flex: 1;
+    background-color: #ccc; /* set background color for right panel */
+    margin-right: -10px
+}
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: rgba(255,255,255,0.25);
+}
+
+th {
+    background-color: rgba(136, 0, 255, 0.9);
+    color: white
+}

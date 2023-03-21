@@ -22,7 +22,7 @@
                     <RadzenFieldset Text="Item Info">
                         <RadzenCard>
                             <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Image</RadzenText>
-                            <RadzenFileInput @bind-FileName=fileName TValue="string" Class="w-100"
+                            <RadzenFileInput @bind-Value=fileValue @bind-FileName=fileName TValue="string" Class="w-100"
                                              Change=@(args => OnChangeImage(args, "FileInput")) />
                         </RadzenCard>
                         <div class="row my-2">
@@ -149,6 +149,7 @@
     string itemCode;
     string itemDescription;
     string fileName;
+    string fileValue;
     long? fileSize;
     double price;
     Guid sizeId;

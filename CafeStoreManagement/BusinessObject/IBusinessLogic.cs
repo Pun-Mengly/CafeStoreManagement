@@ -32,6 +32,7 @@ public interface IBusinessLogic
     #endregion
 
     public void InitailizationData();
+    public void GenerateReceiptReport();
 
     #region User Management
     //Task GenerateEmailConfirmationTokenAsync(ApplicationUser user);

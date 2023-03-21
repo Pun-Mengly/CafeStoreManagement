@@ -412,69 +412,70 @@ public class BusinessLogic : IBusinessLogic
              dataContext.MenuGroups.AddRange(menuGroups);
             #endregion
 
-        //    #region PaymentMethod
-        //    var paymentMethod = new List<PaymentMethodModel>
-        //{
-        //      new PaymentMethodModel()
-        //       {
-        //           Id =Guid.NewGuid(),
-        //           Code = "Cash",
-        //           Name = "Cash",
-        //           Description = CoreString.description,
-        //           IsDeleted = false,
-        //           CreatedBy =userId,
-        //           CreatedDate = DateTime.Now,
-        //       },
-             
-        //};
-        //    dataContext.PaymentMethodModels.AddRange(paymentMethod);
-        //    #endregion
+            //    #region PaymentMethod
+            //    var paymentMethod = new List<PaymentMethodModel>
+            //{
+            //      new PaymentMethodModel()
+            //       {
+            //           Id =Guid.NewGuid(),
+            //           Code = "Cash",
+            //           Name = "Cash",
+            //           Description = CoreString.description,
+            //           IsDeleted = false,
+            //           CreatedBy =userId,
+            //           CreatedDate = DateTime.Now,
+            //       },
 
-        //    #region PromotionTypes
-        //    var promotionTypes = new List<PromotionTypeModel>
-        //{
-        //      new PromotionTypeModel()
-        //       {
-        //           Id =Guid.NewGuid(),
-        //           Code = "PMT-001",
-        //           TypeName = "Discount",
-        //           Description = CoreString.description,
-        //           IsDeleted = false,
-        //           CreatedBy =userId,
-        //           CreatedDate = DateTime.Now,
-        //       },
-        //        new PromotionTypeModel()
-        //       {
-        //           Id =Guid.NewGuid(),
-        //           Code = "PMT-002",
-        //           TypeName = "Givaway",
-        //           Description = CoreString.description,
-        //           IsDeleted = false,
-        //           CreatedBy =userId,
-        //           CreatedDate = DateTime.Now,
-        //       },
-        //        new PromotionTypeModel()
-        //       {
-        //           Id =Guid.NewGuid(),
-        //           Code = "PMT-003",
-        //           TypeName = "PaymentMethod",
-        //           Description = CoreString.description,
-        //           IsDeleted = false,
-        //           CreatedBy =userId,
-        //           CreatedDate = DateTime.Now,
-        //       },
+            //};
+            //    dataContext.PaymentMethodModels.AddRange(paymentMethod);
+            //    #endregion
 
-
-        //};
-        //    dataContext.PromotionTypeModels.AddRange(promotionTypes);
+            //    #region PromotionTypes
+            //    var promotionTypes = new List<PromotionTypeModel>
+            //{
+            //      new PromotionTypeModel()
+            //       {
+            //           Id =Guid.NewGuid(),
+            //           Code = "PMT-001",
+            //           TypeName = "Discount",
+            //           Description = CoreString.description,
+            //           IsDeleted = false,
+            //           CreatedBy =userId,
+            //           CreatedDate = DateTime.Now,
+            //       },
+            //        new PromotionTypeModel()
+            //       {
+            //           Id =Guid.NewGuid(),
+            //           Code = "PMT-002",
+            //           TypeName = "Givaway",
+            //           Description = CoreString.description,
+            //           IsDeleted = false,
+            //           CreatedBy =userId,
+            //           CreatedDate = DateTime.Now,
+            //       },
+            //        new PromotionTypeModel()
+            //       {
+            //           Id =Guid.NewGuid(),
+            //           Code = "PMT-003",
+            //           TypeName = "PaymentMethod",
+            //           Description = CoreString.description,
+            //           IsDeleted = false,
+            //           CreatedBy =userId,
+            //           CreatedDate = DateTime.Now,
+            //       },
 
 
-        //    #endregion
+            //};
+            //    dataContext.PromotionTypeModels.AddRange(promotionTypes);
+
+
+            //    #endregion
 
             #region Promotion
 
 
             #endregion
+
 
             dataContext.SaveChanges();
         }
@@ -669,6 +670,11 @@ public class BusinessLogic : IBusinessLogic
             dataContext.SaveChanges();
         });
         return model;
+    }
+
+    public void GenerateReceiptReport()
+    {
+        throw new NotImplementedException();
     }
 
     //public async Task GenerateEmailConfirmationTokenAsync(ApplicationUser user)

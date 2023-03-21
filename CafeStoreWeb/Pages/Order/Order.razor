@@ -1,0 +1,133 @@
+﻿@page "/order"
+@using CafeStoreManagement.Features;
+@inject HttpClient Http;
+@inject Blazored.LocalStorage.ILocalStorageService sessionStorage;
+@inject NavigationManager Navigation;
+@inject DialogService DialogService
+
+<div id="create-outlets" class="d-flex justify-content-between" style="background-color:indigo; padding:12px;height:60px;">
+    <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1" Class="my-2" Style="color:white">
+        CREATE ORDER
+    </RadzenText>
+    <div></div>
+    <RadzenTextBox @bind-Value=searchItem Placeholder="Search Item" @oninput=@(args => OnChange(args.Value.ToString(), "TextBox with change on every input"))/>
+</div>
+
+<div>
+    @if(items is null)
+    {
+        <span class="spinner-border spinner-border-md centered" role="status" aria-hidden="true"></span>
+    }
+    else
+    {
+        <div class="split-screen" style="padding:12px" data-spy="scroll" data-target="#navbar-example2" data-offset="0">
+            <div class="left-panel row " style="padding:12px">
+                @if (String.IsNullOrEmpty(searchItem))
+                {
+                    @foreach (var item in items)
+                    {
+                        <RadzenCard Class="rz-my-12 rz-mx-auto m-2" Style="max-width: 220px;max-height:320px">
+                            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-2">
+                                    <RadzenImage Path="@item?.Photo" Style="width: 100px; height: 100px; border-radius: 50%;" />
+                            <RadzenStack Gap="0">
+                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0"><b>@(item?.Name)</b></RadzenText>
+                            </RadzenStack>
+                            </RadzenStack>
+                            <RadzenStack Gap="1.5rem">
+                            <RadzenButton Variant="Variant.Text" ButtonStyle="ButtonStyle.Info" Style="float:right" Text="Order" />
+                            </RadzenStack>
+                        </RadzenCard>                
+                    }
+                }
+                else
+                {
+                    @if (itemTemp.Count==0)
+                    {
+                        <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.H6">Data Not Found</RadzenText>
+                    }
+                    else
+                    {
+                        @foreach (var item in itemTemp)
+                        {
+                            <RadzenCard Class="rz-my-12 rz-mx-auto m-2" Style="max-width: 220px;max-height:320px">
+                                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-2">
+                                        <RadzenImage Path="@item?.Photo" Style="width: 100px; height: 100px; border-radius: 50%;" />
+                                <RadzenStack Gap="0">
+                                            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0"><b>@(item?.Name)</b></RadzenText>
+                                </RadzenStack>
+                                </RadzenStack>
+                                <RadzenStack Gap="1.5rem">
+                                <RadzenButton Variant="Variant.Text" ButtonStyle="ButtonStyle.Info" Style="float:right" Text="Order" />
+                                </RadzenStack>
+                            </RadzenCard>                
+                        }
+                    }
+                    
+                }
+                
+            </div>
+            <div class="right-panel">
+                <div id="create-outlets" class="d-flex justify-content-between" style="background-color:indigo; padding:12px;height:60px;">
+                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H1" Class="my-2" Style="color:white" TextAlign="TextAlign.Center">
+                        CHECK OUT
+                    </RadzenText>
+                    <div></div>
+                    <div></div>
+                </div>
+                <div style="padding:12px">
+                    <table>
+                        <tr>
+                            <th>Name</th>
+                            <th>Qty</th>
+                            <th>Size</th>
+                            <th>Price</th>
+                            <th>Amount</th>
+                            <th>Remove</th>
+                        </tr>
+                        <tr>
+                            <td><RadzenText>AAAAA</RadzenText></td>
+                            <td><RadzenText>6</RadzenText></td>
+                            <td><RadzenText>Small</RadzenText></td>
+                            <td><RadzenText>2.00</RadzenText></td>
+                            <td><RadzenText>12.00</RadzenText></td>
+                            <td> <RadzenButton  Variant="Variant.Flat" Shade="Shade.Lighter" Icon="highlight_off" ButtonStyle="ButtonStyle.Danger" /></td>
+                        </tr>
+                            <tr>
+                            <td><RadzenText>AAAAA</RadzenText></td>
+                            <td><RadzenText>6</RadzenText></td>
+                            <td><RadzenText>Small</RadzenText></td>
+                            <td><RadzenText>2.00</RadzenText></td>
+                            <td><RadzenText>12.00</RadzenText></td>
+                            <td> <RadzenButton  Variant="Variant.Flat" Shade="Shade.Lighter" Icon="highlight_off" ButtonStyle="ButtonStyle.Danger" /></td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="padding:12px ;float:right">
+                    <RadzenButton Variant="Variant.Flat" Shade="Shade.Lighter" Icon="add_shopping_cart" Text="PURCHASE" ButtonStyle="ButtonStyle.Primary" />
+                </div>
+            </div>
+        </div>
+
+    }
+</div>
+   
+@code {
+    string? searchItem;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await GetItemDetailsAsync();
+        }
+        StateHasChanged();
+
+    }
+    void OnChange(string value, string name)
+    {
+        Console.WriteLine($"{name} value changed to {value}");
+        if (!String.IsNullOrEmpty(value))
+        {
+            itemTemp = items.Where(e => e.Name.ToLower().Contains(value.ToLower())).ToList();
+        }
+    }
+}
