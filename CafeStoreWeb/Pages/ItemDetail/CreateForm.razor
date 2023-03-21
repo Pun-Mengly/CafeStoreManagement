@@ -23,14 +23,14 @@
                         <RadzenCard>
                             <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Image</RadzenText>
                             <RadzenFileInput @bind-FileName=fileName TValue="string" Class="w-100"
-                                             Change=@(args => OnChangeImage(args, "FileInput")) Error=@(args => OnError(args, "FileInput")) />
+                                             Change=@(args => OnChangeImage(args, "FileInput")) />
                         </RadzenCard>
                         <div class="row my-2">
                             <div class="col-md-4 align-items-center d-flex">
                                 <RadzenLabel Text="Name" />
                             </div>
                             <div class="col-md-8">
-                                <RadzenTextBox style="width: 100%;" Change=@(args => OnChangeName(args)) />
+                                <RadzenTextBox style="width: 100%;" @bind-Value=itemName />
                             </div>
                         </div>
                         <div class="row my-2">
@@ -38,7 +38,7 @@
                                 <RadzenLabel Text="Code" />
                             </div>
                             <div class="col-md-8">
-                                <RadzenTextBox style="width: 100%;" Change=@(args => OnChangeCode(args)) />
+                                <RadzenTextBox style="width: 100%;" @bind-Value=itemCode />
                             </div>
                         </div>
                         <div class="row my-2">
@@ -46,7 +46,7 @@
                                 <RadzenLabel Text="Description" />
                             </div>
                             <div class="col-md-8">
-                                <RadzenTextBox style="width: 100%;" Change=@(args => OnChangeDescriptionItem(args)) />
+                                <RadzenTextBox style="width: 100%;" @bind-Value=itemDescription />
                             </div>
                         </div>
                     </RadzenFieldset>
@@ -118,7 +118,7 @@
                                 <th>Category</th>
                                 <th>Size</th>
                                 <th>Price</th>
-                                <th>Decription</th>
+                                <th>Description</th>
                                 <th>Action</th>
                             </tr>
                             @foreach (var item in itemDetails)
@@ -145,6 +145,9 @@
 </div>
 @code {
     List<ItemDetailResponse> orderDetails;
+    string itemName;
+    string itemCode;
+    string itemDescription;
     string fileName;
     long? fileSize;
     double price;
@@ -181,13 +184,6 @@
     {
         model.Photo = "images/"+fileName;
     }
-    string OnChangeName(string name) => model.Name = name;
-    string OnChangeCode(string code) => model.Code = code;
-    string OnChangeDescriptionItem(string desc) => model.Description = desc;
-    //End Item Model
-
-    //Item Detail Model
-
     void OnChangeSize(object size) {sizeId= sizes.Where(e => e.Name == size.ToString()).Select(e => e.Id).FirstOrDefault(); }
     void OnChangeOutlet(object outlet) {outletId= outlets.Where(e => e.Name == outlet.ToString()).Select(e => e.Id).FirstOrDefault(); }
     void OnChangeCategory(object category) { categoryId = categories.Where(e => e.Name == category.ToString()).Select(e => e.Id).FirstOrDefault(); }
@@ -195,6 +191,9 @@
     void AddMorePrice()
     {
         var itemDetail=new ItemDetailModel();
+        model.Code = itemCode;
+        model.Name = itemName;
+        model.Description = itemDescription;
         itemDetail.Price = price;
         itemDetail.SizeId = sizeId;
         itemDetail.CategortId = categoryId;

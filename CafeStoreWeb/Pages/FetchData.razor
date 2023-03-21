@@ -1,89 +1,115 @@
-﻿@page "/fetchdata"
-@inject IJSRuntime JsRunTime
-<PageTitle>Weather forecast</PageTitle>
+﻿@page "/fetchdata";
+@using CafeStoreWeb.Data;
+@using Microsoft.EntityFrameworkCore;
+<RadzenText Text="Receipt Report" 
+    TextStyle="TextStyle.H2" 
+    Style="background-color:indigo; color:white;padding:12px"></RadzenText>
+@if (employees is null)
+{
+    <span class="spinner-border spinner-border-md d-flex justify-content-center centered" role="status" aria-hidden="true"></span>
 
-@using CafeStoreWeb.Data
-@inject WeatherForecastService ForecastService
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <section id="section2" style="display:@Display2">
-        <h1>Weather forecast2</h1>
-
-        <p>This component demonstrates fetching data from a service.</p>
-
-
-        <button onclick="exportExcel()">Call JS</button>
-
-        @if (forecasts == null)
-        {
-            <p><em>Loading...</em></p>
-        }
-        else
-        {
-            <table class="table" id="idId">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Temp. (C)</th>
-                        <th>Temp. (F)</th>
-                        <th>Summary</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var forecast in forecasts)
-                    {
-                        <tr>
-                            <td>@forecast.Date.ToShortDateString()</td>
-                            <td>@forecast.TemperatureC</td>
-                            <td>@forecast.TemperatureF</td>
-                            <td>@forecast.Summary</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-        <RadzenButton type="button" Click=@(args => close2Open3())>Go to 3</RadzenButton>
-    </section>
-    <section id="section3" style="display:@Display3">
-       <h1>Create Page</h1>
-        <RadzenButton type="button" Click=@(args => close3Open2())>Go to 2</RadzenButton>
-    </section>
-</body>
-</html>
+}
+else
+{
+    <div class="rz-border-info-darker" style="padding:12px">
+        <RadzenDataGrid @ref=grid AllowGrouping="true" AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" PageSize="10" AllowPaging="true" AllowSorting="true"
+                    Data="@employees" TItem="ReceiptReportModel" ColumnWidth="160px" LogicalFilterOperator="LogicalFilterOperator.Or" Render="@OnRender"
+                    HideGroupedColumn="true" GroupRowRender="OnGroupRowRender" GroupRowExpand="OnGroupRowExpand" GroupRowCollapse="OnGroupRowCollapse" Group="@OnGroup"
+                    @bind-AllGroupsExpanded="@allGroupsExpanded">
+            <Columns>
+                <RadzenDataGridColumn TItem="ReceiptReportModel" Property="ReceiptId" Filterable="false" Title="ID" Frozen="true" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="ReceiptReportModel" Property="ItemId" Title="Item" />
+                <RadzenDataGridColumn TItem="ReceiptReportModel" Property="UnitPrice" Title="Unit Price">
+                    <Template Context="detail">
+                        @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", detail.UnitPrice)
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ReceiptReportModel" Property="Qty" Title="Qty" />
+                <RadzenDataGridColumn TItem="ReceiptReportModel" Property="Total" Title="Total">
+                    <Template Context="detail">
+                        @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", detail.Total)
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ReceiptReportModel" Property="Cashier" Title="Cashier" />
+                <RadzenDataGridColumn TItem="ReceiptReportModel" Property="OrderDate" Title="Order Date" />
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+}
 
 
 @code {
+    bool? allGroupsExpanded;
+    RadzenDataGrid<ReceiptReportModel>? grid;
+    List<string> receiptIds = new List<string>() 
+    { 
+        "46805048-22be-4dc0-9543-a3a64f38667b",
+        "6da40307-d124-4952-8852-a8cc2052f08f",
+        "e92ae8ef-8606-4d1c-ae50-2d40ff8599e7"
+    };
 
-    private WeatherForecast[]? forecasts;
-    [Parameter]
-    public string Display2 { get; set; } = "inherit";
-    public string Display3 { get; set; } = "none";
+    List<ReceiptReportModel>? employees=new List<ReceiptReportModel>();
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        await base.OnInitializedAsync();     
+        LoadData();
     }
-    protected async Task JsFunction(){
-        await JsRunTime.InvokeVoidAsync("exportExcel");
-    }
-    private void close2Open3()
+
+    void OnRender(DataGridRenderEventArgs<ReceiptReportModel> args)
     {
-        Display2 = "none";
-        Display3 = "inherit";
-    //document.getElementById('section2').scrollIntoView({ behavior: 'auto'})
+        if(args.FirstRender)
+        {
+            args.Grid.Groups.Add(new GroupDescriptor(){ Property = "ReceiptId", SortOrder = SortOrder.Descending });
+            StateHasChanged();
+        }
     }
-    private void close3Open2()
+
+    void ToggleGroups(bool? value)
     {
-        Display2 = "inherit";
-        Display3 = "none";
+        allGroupsExpanded = value;
+    }
+
+    void OnGroupRowRender(GroupRowRenderEventArgs args)
+    {
+        if (args.FirstRender && args.Group.Data.Key == Guid.Parse("46805048-22be-4dc0-9543-a3a64f38667b") || allGroupsExpanded != null)
+        {
+            args.Expanded = allGroupsExpanded != null ? allGroupsExpanded : false;
+        }
+    }
+
+    void OnGroupRowExpand(Group group)
+    {
+        Console.WriteLine($"Group row with key: {group.Data.Key} expanded");
+    }
+
+    void OnGroupRowCollapse(Group group)
+    {
+        Console.WriteLine($"Group row with key: {group.Data.Key} collapsed");
+    }
+
+    void OnGroup(DataGridColumnGroupEventArgs<ReceiptReportModel> args)
+    {
+        Console.WriteLine($"DataGrid {(args.GroupDescriptor != null ? "grouped" : "ungrouped")} by {args.Column.GetGroupProperty()}");
+    }
+    void LoadData()
+    {
+        Random rnd = new Random();
+
+        for (int i = 0; i < 15; i++)
+        {
+            var qty = rnd.Next(1, 10);
+            var price = rnd.NextDouble();
+            employees!.Add(new ReceiptReportModel()
+                {
+                    ReceiptId = Guid.Parse(receiptIds[rnd.Next(receiptIds.Count)]),
+                    ItemId = Guid.NewGuid(),
+                    Cashier = "PUN MENGLY",
+                    OrderDate = DateTime.Now,
+                    Qty = qty,
+                    UnitPrice = price,
+                    Total = qty * price
+                });
+        }
     }
 }

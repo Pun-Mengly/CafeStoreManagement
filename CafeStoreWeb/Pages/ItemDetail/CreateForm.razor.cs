@@ -25,15 +25,22 @@ namespace CafeStoreWeb.Pages.ItemDetail
         }
         public async Task OnSave(NotificationMessage message)
         {
-            model.ItemDetails = itemDetails;
-            string token = await sessionStorage.GetItemAsync<string>("Token");
-            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = await Http.PostAsJsonAsync("api/ItemDetail", model);
-            //show success alert 
-            if ((int)response.StatusCode == 200)
+            try
             {
-                NotificationService.Notify(message);
-                Navigation.NavigateTo("item-detail");
+                model.ItemDetails = itemDetails;
+                string token = await sessionStorage.GetItemAsync<string>("Token");
+                Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await Http.PostAsJsonAsync("api/ItemDetail", model);
+                //show success alert 
+                if ((int)response.StatusCode == 200)
+                {
+                    NotificationService.Notify(message);
+                    Navigation.NavigateTo("item-detail");
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
         public async Task Sizes()
