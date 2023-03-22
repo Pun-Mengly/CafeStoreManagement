@@ -1,0 +1,150 @@
+﻿@page "/report/receipt";
+@using CafeStoreManagement.DTOs;
+@using CafeStoreWeb.Data;
+@using Microsoft.EntityFrameworkCore;
+@inject IJSRuntime JSRunTime
+@inject HttpClient Http;
+@inject Blazored.LocalStorage.ILocalStorageService sessionStorage;
+@inject NavigationManager Navigation;
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+
+<RadzenText Text="Receipt Report" id="text-header"
+            TextStyle="TextStyle.H2"
+            Style="background-color:indigo; color:white;padding:12px"></RadzenText>
+
+<div class="d-flex justify-content-between">
+    <div class="d-flex justify-content-between">
+        <div style="padding-right:12px">
+            <RadzenText Text="Outlet"></RadzenText>
+            <RadzenDropDown TValue="string" Data=@OutletModels.Select(e=>e.Name) Style="width: 100%; max-width: 400px;"
+                            Change=@(args => OnChangeOutlet(args)) 
+                            Placeholder="Select Outlet"/>
+        </div>
+        <div style="padding-right:12px;">
+            <RadzenText Text="From"></RadzenText>
+            <RadzenDatePicker @bind-Value=@startDate Style="margin-top:5%"/>
+        </div>
+        <div style="padding-right:12px">
+            <RadzenText Text="To"></RadzenText>
+            <RadzenDatePicker @bind-Value=@endDate Style="margin-top:5%" />
+        </div>
+        <div style="padding-right:12px;">
+            <RadzenText Text="Receipt Id"></RadzenText>
+            <RadzenTextBox @bind-Value=@(receiptID) Style="margin-top:5%" />
+        </div>
+        <div>
+            <RadzenButton Text="Filter" Icon="filter_alt" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Style="margin-top:34%"
+                          Click=@(args => Filter()) />
+        </div>
+    </div>
+    <div></div>
+</div>
+@if (ReceiptModels.Count==0)
+{
+    @*<span class="spinner-border spinner-border-md d-flex justify-content-center centered" role="status" aria-hidden="true"></span>*@
+    <RadzenText Style="padding:12px" TextStyle="TextStyle.H6" TextAlign="TextAlign.Start">No Data Available</RadzenText>
+
+}
+else
+{
+    @*<RadzenButton Text="Export XLS" Icon="grid_on" Click="@(args => Export())" class="mb-4 me-2" />*@
+
+    <div class="rz-border-info-darker" style="padding:12px;margin-top:12px">
+        <RadzenDataGrid id="table-export" @ref=grid AllowGrouping="true" AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" PageSize="10" AllowPaging="true" AllowSorting="true"
+                    Data="@ReceiptModels" TItem="ReceiptDto" ColumnWidth="160px" LogicalFilterOperator="LogicalFilterOperator.Or" Render="@OnRender"
+                    HideGroupedColumn="true" GroupRowRender="OnGroupRowRender" GroupRowExpand="OnGroupRowExpand" GroupRowCollapse="OnGroupRowCollapse" Group="@OnGroup"
+                    @bind-AllGroupsExpanded="@allGroupsExpanded">
+            <Columns>
+                <RadzenDataGridColumn TItem="ReceiptDto" Property="ReceiptId" Filterable="false" Title="Receipt Id" Frozen="true" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="ReceiptDto" Property="ItemName" Title="Item" />
+                <RadzenDataGridColumn TItem="ReceiptDto" Property="SizeName" Title="Size" />
+                <RadzenDataGridColumn TItem="ReceiptDto" Property="Qty" Title="Qty" />
+                <RadzenDataGridColumn TItem="ReceiptDto" Property="UnitPrice" Title="Unit Price">
+                    <Template Context="detail">
+                        @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", detail.Price)
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ReceiptDto" Property="Amount" Title="Amount">
+                    <Template Context="detail">
+                        @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", detail.Amount)
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ReceiptDto" Property="Total" Title="Total">
+                    <Template Context="detail">
+                        @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", detail.Total)
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ReceiptDto" Property="CashierName" Title="Cashier" />
+                <RadzenDataGridColumn TItem="ReceiptDto" Property="OutletName" Title="Outlet" />
+                <RadzenDataGridColumn TItem="ReceiptDto" Property="OrderDate" Title="Order Date" />
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+}
+
+
+@code 
+{
+
+    bool? allGroupsExpanded;
+    DateTime? startDate = DateTime.Now;
+    DateTime? endDate = DateTime.Now;
+    string receiptID;
+    RadzenDataGrid<ReceiptDto>? grid;
+    Guid outletId;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Outlets();
+        }
+        StateHasChanged();
+    }
+    
+
+    void OnRender(DataGridRenderEventArgs<ReceiptDto> args)
+        {
+        if (args.FirstRender)
+        {
+            args.Grid.Groups.Add(new GroupDescriptor() { Property = "ReceiptId", SortOrder = SortOrder.Descending });
+            StateHasChanged();
+        }
+    }
+
+    void ToggleGroups(bool? value)
+    {
+        allGroupsExpanded = value;
+    }
+
+    void OnGroupRowRender(GroupRowRenderEventArgs args)
+    {
+        if (args.FirstRender && args.Group.Data.Key == Guid.Parse("46805048-22be-4dc0-9543-a3a64f38667b") || allGroupsExpanded != null)
+        {
+            args.Expanded = allGroupsExpanded != null ? allGroupsExpanded : false;
+        }
+    }
+
+    void OnGroupRowExpand(Group group)
+    {
+        Console.WriteLine($"Group row with key: {group.Data.Key} expanded");
+    }
+
+    void OnGroupRowCollapse(Group group)
+    {
+        Console.WriteLine($"Group row with key: {group.Data.Key} collapsed");
+    }
+
+    void OnGroup(DataGridColumnGroupEventArgs<ReceiptDto> args)
+    {
+        Console.WriteLine("DataGrid");
+        //Console.WriteLine($"DataGrid {(args.GroupDescriptor != null ? "grouped" : "ungrouped")} by {args.Column.GetGroupProperty()}");
+    }
+    public async Task Export()
+    {
+        await JSRunTime.InvokeAsync<string>("ExportEcell");
+    }
+    void OnChangeOutlet(object outlet) => outletId = OutletModels.Where(e => e.Name == outlet.ToString()).Select(e => e.Id).FirstOrDefault();
+
+}

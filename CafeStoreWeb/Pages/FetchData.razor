@@ -1,10 +1,10 @@
-﻿@page "/fetchdata";
+﻿@*@page "/fetchdata";
 @using CafeStoreWeb.Data;
 @using Microsoft.EntityFrameworkCore;
 @inject IJSRuntime JSRunTime
-<RadzenText Text="Receipt Report"  id="text-header"
-    TextStyle="TextStyle.H2" 
-    Style="background-color:indigo; color:white;padding:12px"></RadzenText>
+<RadzenText Text="Receipt Report" id="text-header"
+            TextStyle="TextStyle.H2"
+            Style="background-color:indigo; color:white;padding:12px"></RadzenText>
 @if (employees is null)
 {
     <span class="spinner-border spinner-border-md d-flex justify-content-center centered" role="status" aria-hidden="true"></span>
@@ -44,26 +44,26 @@ else
 @code {
     bool? allGroupsExpanded;
     RadzenDataGrid<ReceiptModel>? grid;
-    List<string> receiptIds = new List<string>() 
-    { 
+    List<string> receiptIds = new List<string>()
+    {
         "46805048-22be-4dc0-9543-a3a64f38667b",
         "6da40307-d124-4952-8852-a8cc2052f08f",
         "e92ae8ef-8606-4d1c-ae50-2d40ff8599e7"
     };
 
-    List<ReceiptModel>? employees=new List<ReceiptModel>();
+    List<ReceiptModel>? employees = new List<ReceiptModel>();
 
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();     
+        await base.OnInitializedAsync();
         LoadData();
     }
 
     void OnRender(DataGridRenderEventArgs<ReceiptModel> args)
     {
-        if(args.FirstRender)
+        if (args.FirstRender)
         {
-            args.Grid.Groups.Add(new GroupDescriptor(){ Property = "ReceiptId", SortOrder = SortOrder.Descending });
+            args.Grid.Groups.Add(new GroupDescriptor() { Property = "ReceiptId", SortOrder = SortOrder.Descending });
             StateHasChanged();
         }
     }
@@ -119,3 +119,4 @@ else
         await JSRunTime.InvokeAsync<string>("ExportEcell");
     }
 }
+*@

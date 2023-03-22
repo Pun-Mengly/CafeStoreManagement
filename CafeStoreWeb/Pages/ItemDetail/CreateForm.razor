@@ -164,12 +164,15 @@
         await JSRuntime.InvokeVoidAsync("history.back");
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await Sizes();
-        await Categories();
-        await Outlets();
-        await base.OnInitializedAsync();
+        if (firstRender)
+        {
+            await Sizes();
+            await Categories();
+            await Outlets();
+        }
+        StateHasChanged();
     }
     void OnChange(int index)
     {

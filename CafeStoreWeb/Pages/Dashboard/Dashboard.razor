@@ -1,4 +1,11 @@
 ﻿@page "/dashboard"
+
+@inject HttpClient Http;
+@inject Blazored.LocalStorage.ILocalStorageService sessionStorage;
+@inject NavigationManager Navigation;
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+
 @using System.Globalization
 <div style="padding-right:12px;">
     <RadzenCard Class=" rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="margin: 0 calc(-1 * var(--rz-card-padding));margin-top:unset; padding: 2rem;">
@@ -18,10 +25,11 @@
         @foreach(var outlet in ListOutlets)
         {
             <RadzenCard Class="col-md-3 col-xl-3 col-lg-3  rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="padding: 2rem;width: 24%">
-                <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light"><strong>@outlet</strong></RadzenText>
-                <RadzenText TextStyle="TextStyle.H5" Class="rz-color-danger-light"><b>@(revenue.First().Revenue.ToString("C0", CultureInfo.CreateSpecificCulture("en-US")))</b></RadzenText>
+                <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light"><strong>@outlet.OutletName</strong></RadzenText>
+                <RadzenText TextStyle="TextStyle.H5" Class="rz-color-danger-light"><b>@String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", outlet.RevenuePerYear)</b></RadzenText>
                 <div class="text-end">
-                    <RadzenButton Class="rz-color-primary-light" Variant="Variant.Text" Text="See more" />
+                    <RadzenButton Class="rz-color-primary-light" Variant="Variant.Text" Text="See more"
+                              Click=@(args => SeeMore(outlet.OutletId)) />
                 </div>
             </RadzenCard>
         }
@@ -67,21 +75,30 @@
 
     IList<DataItem> revenue = new List<DataItem>();
 
-    protected override void OnInitialized()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var random = new Random();
-
-        for (var year = 2013; year <= 2020; year++)
+        if (firstRender)
         {
-            foreach (var item in ListOutlets)
+            await RevenueOutlets();
+            var random = new Random();
+
+            for (var year = 2013; year <= 2020; year++)
             {
-                revenue.Add(new DataItem
-                    {
-                        Year = year,
-                        Quarter = item,
-                        Revenue = random.NextDouble() * 200000
-                    });
+                foreach (var item in ListOutlets)
+                {
+                    revenue.Add(new DataItem
+                        {
+                            Year = year,
+                            Quarter = item!.OutletName,
+                            Revenue = random.NextDouble() * 200000
+                        });
+                }
             }
         }
+        StateHasChanged();
+    }
+    async Task SeeMore(Guid outletId)
+    {
+        Navigation.NavigateTo("/report/receipt");
     }
 }

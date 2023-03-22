@@ -17,12 +17,12 @@ else
     <RadzenFieldset Text="SET SIZE">
         <div class="row my-2">
             <div class="col-md-4 align-items-center d-flex">
-                <RadzenLabel Text="Price" />
+                <RadzenLabel Text="Amount" />
             </div>
             <div class="col-md-8">
                 @if (!(sizeId == Guid.Empty && outletId == Guid.Empty))
                 {
-                    <RadzenNumeric style="width: 100%;" @bind-Value=@price Disabled/>
+                    <RadzenNumeric style="width: 100%;" @bind-Value=@amount Disabled/>
                 }
                 else
                 {
@@ -74,7 +74,7 @@ else
     Guid outletId;
     public List<SizeModel>? sizes { get; set; }
     public List<OutletModel>? outlets { get; set; }
-    double price;
+    double amount;
     int qty;
     [Parameter]
     public ItemResponse? ChildValue { get; set; }   
@@ -116,7 +116,7 @@ else
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Token);
         var respone = await Http.SendAsync(request);
         var body = respone.Content.ReadAsStringAsync();
-        price = Double.Parse(body.Result);
+        amount = Double.Parse(body.Result);
     }
     async Task OnChangeSize(object size) 
     { 
@@ -131,7 +131,7 @@ else
     }
     async Task OnInput(ChangeEventArgs args)
     {
-        if (args.Value is null)
+        if (String.IsNullOrEmpty(args!.Value!.ToString()))
         {
             qty = 0;
         }
@@ -143,14 +143,19 @@ else
     }
     async Task AddToCart(object arg)
     {
+        double unitPrice = amount / qty;
+        if (Double.IsNaN(unitPrice) || Double.IsInfinity(unitPrice))
+        {
+            unitPrice = 0;
+        }
         Order.OrderModels.Add(new Data.ReceiptModel()
         {
                 ItemId = ChildValue!.Id,
                 SizeId=sizeId,
                 OutletId=outletId,
                 Qty=qty,
-                UnitPrice=price/qty,
-                Total=price,
+                UnitPrice = unitPrice,
+                Amount=amount,
         });
         
     }

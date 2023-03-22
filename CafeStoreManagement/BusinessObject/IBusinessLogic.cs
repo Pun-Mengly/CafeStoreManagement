@@ -1,4 +1,5 @@
 ﻿
+using CafeStoreManagement.DTOs;
 using CafeStoreManagement.Features;
 using CafeStoreManagement.Features.ItemDetail.Response;
 using CafeStoreManagement.Models;
@@ -48,7 +49,9 @@ public interface IBusinessLogic
 
 
     public Task PostOrderModel(List<ReceiptModel> item);
-    public Task<IEnumerable<ReceiptModel>> GetReceipts(Guid outletId,DateTime startDate,DateTime endDate,Guid receiptId);
+    public Task<IEnumerable<ReceiptDto>> GetReceipts(Guid outletId,DateTime startDate,DateTime endDate,Guid receiptId);
+
+    public Task<IEnumerable<RevenueOutletsDto>> GetRevenueOutlets();
 
 
 }

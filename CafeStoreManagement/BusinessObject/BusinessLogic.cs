@@ -1,29 +1,33 @@
 ﻿
 using CafeStoreManagement.ConfigurationModels;
+using CafeStoreManagement.DTOs;
 using CafeStoreManagement.Features;
 using CafeStoreManagement.Features.ItemDetail.Response;
 using CafeStoreManagement.Models;
 using CafeStoreWeb.Data;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 
 public class BusinessLogic : IBusinessLogic
 {
-    //private readonly UserManager<ApplicationUser> _userManager;
+    private readonly UserManager<IdentityUser> _userManager;
     private readonly DataContext dataContext;
     private readonly IHttpContextAccessor httpContextAccessor;
     private readonly string userId;
     private readonly IConfiguration _configuration;
+
+
     //private readonly IEmailService _emailService;
 
 
 
-    public BusinessLogic(DataContext _dataContext, IHttpContextAccessor _httpContextAccessor
-                         /*UserManager<ApplicationUser> userManager*/, IConfiguration configuration /*IEmailService emailService*/)
+    public BusinessLogic(DataContext _dataContext, IHttpContextAccessor _httpContextAccessor,
+                         UserManager<IdentityUser> userManager, IConfiguration configuration /*IEmailService emailService*/)
     {
         this.dataContext = _dataContext;
         this.httpContextAccessor = _httpContextAccessor;
         this.userId = httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-        //_userManager = userManager;
+        _userManager = userManager;
         _configuration = configuration;
         //_emailService = emailService;
     }
@@ -731,7 +735,7 @@ public class BusinessLogic : IBusinessLogic
                 OutletId = item.OutletId,
                 Qty = item.Qty,
                 SizeId = item.SizeId,
-                Total = item.Total,
+                Amount = item.Amount,
                 UnitPrice = item.UnitPrice,
                 ReceiptId = item.ReceiptId,
             };
@@ -742,63 +746,255 @@ public class BusinessLogic : IBusinessLogic
 
     }
 
-    public async Task<IEnumerable<ReceiptModel>> GetReceipts(Guid outletId, DateTime startDate, DateTime endDate, Guid receiptId)
+    public async Task<IEnumerable<ReceiptDto>> GetReceipts(Guid outletId, DateTime startDate, DateTime endDate, Guid receiptId)
     {
+        List<ReceiptDto> receipts= new List<ReceiptDto>();
         if (receiptId == Guid.Empty && outletId == Guid.Empty)
         {
-            return await dataContext.ReceiptReportModels.Where(e => e.CreatedBy == userId &&
+            var results= await dataContext.ReceiptReportModels.Where(e => e.CreatedBy == userId &&
                                                                 e.OrderDate >= startDate &&
                                                                 e.OrderDate < endDate).ToListAsync();
+            foreach (var result in results)
+            {
+                //itemName
+                var itemName= await dataContext.ItemModels.Where(e=>e.Id==result.ItemId).Select(e=>e.Name).FirstOrDefaultAsync();
+                //Size
+                var sizeName= await dataContext.SizeModels.Where(e=>e.Id==result.SizeId).Select(e=>e.Name).FirstOrDefaultAsync();
+                //outlet
+                var outletName= await dataContext.OutletModels.Where(e=>e.Id==result.OutletId).Select(e=>e.Name).FirstOrDefaultAsync();
+                //cashier
+                var cashierName = await _userManager.Users.Where(e => e.Id == result.CreatedBy).Select(e => e.UserName).FirstOrDefaultAsync();
+
+                var obj = new ReceiptDto()
+                {
+                    Id= result.Id,
+                    CreatedDate= result.CreatedDate,
+                    Description = result.Description,
+                    CashierName= cashierName,
+                    CreatedBy=result.CreatedBy,
+                    ItemId= result.ItemId,
+                    CashierId=result.CreatedBy,
+                    OrderDate= result.OrderDate,
+                    ReceiptId= result.ReceiptId,
+                    OutletId = result.OutletId,
+                    SizeId= result.SizeId,
+                    Qty= result.Qty,
+                    Price= result.UnitPrice,
+                    Amount = result.Amount,
+                    ItemName= itemName,
+                    SizeName=sizeName,
+                    OutletName=outletName,
+                    Total=results.Where(e=>e.ReceiptId==result.ReceiptId).Sum(e=>e.Amount)
+                };
+                receipts.Add(obj);
+            }
+            return receipts;
         }
-        else if(outletId == Guid.Empty)
+        else if (receiptId != Guid.Empty && outletId != Guid.Empty)
         {
-            return await dataContext.ReceiptReportModels.Where(e => e.CreatedBy == userId &&
+            var results = await dataContext.ReceiptReportModels.Where(e => e.CreatedBy == userId &&
                                                                 e.ReceiptId == receiptId &&
-                                                                e.OrderDate >= startDate &&
-                                                                e.OrderDate < endDate).ToListAsync();
-        } 
-        else
-        {
-            return await dataContext.ReceiptReportModels.Where(e => e.CreatedBy == userId &&
                                                                 e.OutletId == outletId &&
                                                                 e.OrderDate >= startDate &&
                                                                 e.OrderDate < endDate).ToListAsync();
+            foreach (var result in results)
+            {
+                //itemName
+                var itemName = await dataContext.ItemModels.Where(e => e.Id == result.ItemId).Select(e => e.Name).FirstOrDefaultAsync();
+                //Size
+                var sizeName = await dataContext.SizeModels.Where(e => e.Id == result.SizeId).Select(e => e.Name).FirstOrDefaultAsync();
+                //outlet
+                var outletName = await dataContext.OutletModels.Where(e => e.Id == result.OutletId).Select(e => e.Name).FirstOrDefaultAsync();
+                //cashier
+                var cashierName = await _userManager.Users.Where(e => e.Id == result.CreatedBy).Select(e => e.UserName).FirstOrDefaultAsync();
+                var obj = new ReceiptDto()
+                {
+                    Id = result.Id,
+                    CreatedDate = result.CreatedDate,
+                    Description = result.Description,
+                    CashierName = cashierName,
+                    CreatedBy = result.CreatedBy,
+                    ItemId = result.ItemId,
+                    CashierId = result.CreatedBy,
+                    OrderDate = result.OrderDate,
+                    ReceiptId = result.ReceiptId,
+                    OutletId = result.OutletId,
+                    SizeId = result.SizeId,
+                    Qty = result.Qty,
+                    Price = result.UnitPrice,
+                    Amount = result.Amount,
+                    ItemName = itemName,
+                    SizeName = sizeName,
+                    OutletName = outletName
+
+                };
+                receipts.Add(obj);
+            }
+            return receipts;
+        }
+        else if(outletId == Guid.Empty)
+        {
+            var results= await dataContext.ReceiptReportModels.Where(e => e.CreatedBy == userId &&
+                                                                e.ReceiptId == receiptId &&
+                                                                e.OrderDate >= startDate &&
+                                                                e.OrderDate < endDate).ToListAsync();
+            foreach (var result in results)
+            {
+                //itemName
+                var itemName = await dataContext.ItemModels.Where(e => e.Id == result.ItemId).Select(e => e.Name).FirstOrDefaultAsync();
+                //Size
+                var sizeName = await dataContext.SizeModels.Where(e => e.Id == result.SizeId).Select(e => e.Name).FirstOrDefaultAsync();
+                //outlet
+                var outletName = await dataContext.OutletModels.Where(e => e.Id == result.OutletId).Select(e => e.Name).FirstOrDefaultAsync();
+                //cashier
+                var cashierName =await _userManager.Users.Where(e => e.Id == result.CreatedBy).Select(e => e.UserName).FirstOrDefaultAsync();
+                var obj = new ReceiptDto()
+                {
+                    Id = result.Id,
+                    CreatedDate = result.CreatedDate,
+                    Description = result.Description,
+                    CashierName = cashierName,
+                    CreatedBy = result.CreatedBy,
+                    ItemId = result.ItemId,
+                    CashierId = result.CreatedBy,
+                    OrderDate = result.OrderDate,
+                    ReceiptId = result.ReceiptId,
+                    OutletId = result.OutletId,
+                    SizeId = result.SizeId,
+                    Qty = result.Qty,
+                    Price = result.UnitPrice,
+                    Amount = result.Amount,
+                    ItemName = itemName,
+                    SizeName = sizeName,
+                    OutletName = outletName
+                    
+                };
+                receipts.Add(obj);
+            }
+            return receipts;
+        }
+        else if (receiptId == Guid.Empty)
+        {
+            var results = await dataContext.ReceiptReportModels.Where(e => e.CreatedBy == userId &&
+                                                                e.OutletId == outletId &&
+                                                                e.OrderDate >= startDate &&
+                                                                e.OrderDate < endDate).ToListAsync();
+            foreach (var result in results)
+            {
+                //itemName
+                var itemName = await dataContext.ItemModels.Where(e => e.Id == result.ItemId).Select(e => e.Name).FirstOrDefaultAsync();
+                //Size
+                var sizeName = await dataContext.SizeModels.Where(e => e.Id == result.SizeId).Select(e => e.Name).FirstOrDefaultAsync();
+                //outlet
+                var outletName = await dataContext.OutletModels.Where(e => e.Id == result.OutletId).Select(e => e.Name).FirstOrDefaultAsync();
+                //cashier
+                var cashierName = await _userManager.Users.Where(e => e.Id == result.CreatedBy).Select(e => e.UserName).FirstOrDefaultAsync();
+                var obj = new ReceiptDto()
+                {
+                    Id = result.Id,
+                    CreatedDate = result.CreatedDate,
+                    Description = result.Description,
+                    CashierName = cashierName,
+                    CreatedBy = result.CreatedBy,
+                    ItemId = result.ItemId,
+                    CashierId = result.CreatedBy,
+                    OrderDate = result.OrderDate,
+                    ReceiptId = result.ReceiptId,
+                    OutletId = result.OutletId,
+                    SizeId = result.SizeId,
+                    Qty = result.Qty,
+                    Price = result.UnitPrice,
+                    Amount = result.Amount,
+                    ItemName = itemName,
+                    SizeName = sizeName,
+                    OutletName = outletName
+
+                };
+                receipts.Add(obj);
+            }
+            return receipts;
+        }
+        else
+        {
+            var results= await dataContext.ReceiptReportModels.Where(e => e.CreatedBy == userId &&
+                                                                e.OrderDate >= startDate &&
+                                                                e.OrderDate < endDate).ToListAsync();
+            foreach (var result in results)
+            {
+                //itemName
+                var itemName = await dataContext.ItemModels.Where(e => e.Id == result.ItemId).Select(e => e.Name).FirstOrDefaultAsync();
+                //Size
+                var sizeName = await dataContext.SizeModels.Where(e => e.Id == result.SizeId).Select(e => e.Name).FirstOrDefaultAsync();
+                //outlet
+                var outletName = await dataContext.OutletModels.Where(e => e.Id == result.OutletId).Select(e => e.Name).FirstOrDefaultAsync();
+                //cashier
+                var cashierName = await _userManager.Users.Where(e => e.Id == result.CreatedBy).Select(e => e.UserName).FirstOrDefaultAsync();
+
+                var obj = new ReceiptDto()
+                {
+                    Id = result.Id,
+                    CreatedDate = result.CreatedDate,
+                    Description = result.Description,
+                    CashierName = cashierName,
+                    CreatedBy = result.CreatedBy,
+                    ItemId = result.ItemId,
+                    CashierId = result.CreatedBy,
+                    OrderDate = result.OrderDate,
+                    ReceiptId = result.ReceiptId,
+                    OutletId = result.OutletId,
+                    SizeId = result.SizeId,
+                    Qty = result.Qty,
+                    Price = result.UnitPrice,
+                    Amount = result.Amount,
+                    ItemName = itemName,
+                    SizeName = sizeName,
+                    OutletName = outletName
+                };
+                receipts.Add(obj);
+            }
+            return receipts;
         }
     }
 
-    //public async Task GenerateEmailConfirmationTokenAsync(ApplicationUser user)
-    //{
-    //    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-    //    if (!string.IsNullOrEmpty(token))
-    //    {
-    //        //await SendEmailConfirmationEmail(user, token);
-    //    }
-    //}
-
-    //public async Task GenerateForgotPasswordTokenAsync(ApplicationUser user)
-    //{
-    //    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-    //    if (!string.IsNullOrEmpty(token))
-    //    {
-    //        await SendForgotPasswordEmail(user, token);
-    //    }
-    //}
-    //private async Task SendForgotPasswordEmail(ApplicationUser user, string token)
-    //{
-    //    string appDomain = _configuration.GetSection("Application:AppDomain").Value;
-    //    string confirmationLink = _configuration.GetSection("Application:ForgotPassword").Value;
-
-    //    UserEmailOptions options = new UserEmailOptions
-    //    {
-    //        ToEmails = new List<string>() { user.Email },
-    //        PlaceHolders = new List<KeyValuePair<string, string>>()
-    //            {
-    //                new KeyValuePair<string, string>("{{UserName}}", user.FirstName),
-    //                new KeyValuePair<string, string>("{{Link}}",
-    //                    string.Format(appDomain + confirmationLink, user.Id, token))
-    //            }
-    //    };
-
-    //    await _emailService.SendEmailForForgotPassword(options);
-    //}
+    public async Task<IEnumerable<RevenueOutletsDto>> GetRevenueOutlets()
+    {
+        try
+        {
+            List<RevenueOutletsDto> revenueOutletsDtos = new List<RevenueOutletsDto>();
+            DateTime currentDateTime= DateTime.Now;
+            static DateTime FirstDayOfYear(DateTime y)
+            {
+                return new DateTime(y.Year, 1, 1);
+            }
+            var preDateTime = FirstDayOfYear(currentDateTime);
+            var receipts=await dataContext.ReceiptReportModels.Where(e=>e.CreatedBy==userId&&
+                                                        e.OrderDate>= preDateTime&&
+                                                        e.OrderDate<currentDateTime)
+                                                        .ToListAsync();
+            var groupOutlets=receipts.GroupBy(e => e.OutletId).ToList();
+            foreach (var groupOutlet in groupOutlets)
+            {
+                //outlet
+                var outletName=await dataContext.OutletModels.Where(e=>e.CreatedBy==userId&&
+                                                            e.Id==groupOutlet.Key)
+                                                            .Select(e=>e.Name)
+                                                            .FirstOrDefaultAsync();                     
+                var obj = new RevenueOutletsDto()
+                {
+                    Id=Guid.NewGuid(),
+                    OutletId=groupOutlet.Key,
+                    Description="Filter from first day of the year",
+                    OutletName=outletName,
+                    RevenuePerYear= groupOutlet.Sum(e=>e.Amount)
+                };
+                revenueOutletsDtos.Add(obj);
+                
+            }
+            return revenueOutletsDtos;
+        }
+        catch(Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
 }

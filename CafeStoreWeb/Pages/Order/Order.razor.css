@@ -35,6 +35,6 @@ tr:nth-child(even) {
 }
 
 th {
-    background-color: rgba(136, 0, 255, 0.9);
+    background-color: indigo;
     color: white
 }

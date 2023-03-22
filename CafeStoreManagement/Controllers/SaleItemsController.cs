@@ -4,6 +4,7 @@ using CafeStoreManagement.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CafeStoreWeb.Data;
+using CafeStoreManagement.DTOs;
 
 namespace CafeStoreManagement.Controllers
 {
@@ -18,7 +19,11 @@ namespace CafeStoreManagement.Controllers
             _logic = logic;
         }
         [HttpGet]
-        public async Task<IEnumerable<ReceiptModel>> Get(Guid outletId, DateTime startDate, DateTime endDate, Guid receiptId) => await _logic.GetReceipts(outletId,startDate,endDate,receiptId);
+        public async Task<IEnumerable<ReceiptDto>> Get(Guid outletId, DateTime startDate, DateTime endDate, Guid receiptId) => await _logic.GetReceipts(outletId,startDate,endDate,receiptId);
+
+        [HttpGet]
+        [Route("revenue-outlet")]
+        public async Task<IEnumerable<RevenueOutletsDto>> GetRevenueOutlets() => await _logic.GetRevenueOutlets();
 
         [HttpPost]
         public async Task Post([FromBody] List<ReceiptModel> items) => await _logic.PostOrderModel(items);

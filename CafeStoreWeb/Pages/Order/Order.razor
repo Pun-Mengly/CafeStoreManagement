@@ -37,7 +37,7 @@
                             </RadzenStack>
                             <RadzenStack Gap="1.5rem">
                             <RadzenButton Variant="Variant.Text" ButtonStyle="ButtonStyle.Info" Style="float:right" Text="Order"
-                                  Click=@(arg=>OrderAction(item)) />
+                                  Click=@(arg=>OrderAction(item!)) />
                             </RadzenStack>
                         </RadzenCard>                
                     }
@@ -60,7 +60,7 @@
                                 </RadzenStack>
                                 </RadzenStack>
                                 <RadzenStack Gap="1.5rem">
-                                    <RadzenButton Click=@(arg=>OrderAction(item)) Variant="Variant.Text" ButtonStyle="ButtonStyle.Info" Style="float:right" Text="Order" />
+                                    <RadzenButton Click=@(arg=>OrderAction(item!)) Variant="Variant.Text" ButtonStyle="ButtonStyle.Info" Style="float:right" Text="Order" />
                                 </RadzenStack>
                             </RadzenCard>                
                         }
@@ -95,13 +95,17 @@
                                     <td><RadzenText>@itemModels.Where(e=>e.Id==item.ItemId).Select(e=>e.Name).FirstOrDefault()</RadzenText></td>
                                     <td><RadzenText>@item.Qty</RadzenText></td>
                                     <td><RadzenText>@sizeModels.Where(e=>e.Id==item.SizeId).Select(e=>e.Name).FirstOrDefault()</RadzenText></td>
-                                    <td><RadzenText>@item.UnitPrice</RadzenText></td>
-                                    <td><RadzenText>@item.Total</RadzenText></td>
+                                    <td><RadzenText>@String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", item.UnitPrice)</RadzenText></td>
+                                    <td><RadzenText>@String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", item.Amount)</RadzenText></td>
                                     <td> <RadzenButton Variant="Variant.Flat" Shade="Shade.Lighter" Icon="highlight_off" ButtonStyle="ButtonStyle.Danger"
                                           Click=@(args => RemoveItemAddToCart(item)) />
                                     </td>
                                 </tr>
                             }
+                            <tr>
+                                <td colspan="5"><RadzenText>Total:</RadzenText></td>
+                                <td><RadzenText>@String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", OrderModels.Sum(e=>e.Amount))</RadzenText></td>
+                            </tr>
                         }
                     </table>
                 </div>
@@ -142,7 +146,7 @@
 
         await DialogService.OpenAsync<DialogCardPage>($"{item.Name}",
                new Dictionary<string, object>() { { "ChildValue", item }, { "Token", token } },
-               new DialogOptions() { Width = "700px", Height = "512px", Resizable = true});
+               new DialogOptions() { Width = "700px", Height = "400px", Resizable = true});
     }
     async Task RemoveItemAddToCart(ReceiptModel item)
     {
