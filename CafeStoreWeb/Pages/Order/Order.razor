@@ -1,13 +1,15 @@
 ﻿@page "/order"
 @using CafeStoreManagement.Features;
+@using CafeStoreWeb.Data;
 @inject HttpClient Http;
 @inject Blazored.LocalStorage.ILocalStorageService sessionStorage;
 @inject NavigationManager Navigation;
 @inject DialogService DialogService
+@inject NotificationService NotificationService
 
 <div id="create-outlets" class="d-flex justify-content-between" style="background-color:indigo; padding:12px;height:60px;">
     <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1" Class="my-2" Style="color:white">
-        CREATE ORDER
+        MENU
     </RadzenText>
     <div></div>
     <RadzenTextBox @bind-Value=searchItem Placeholder="Search Item" @oninput=@(args => OnChange(args.Value.ToString(), "TextBox with change on every input"))/>
@@ -34,7 +36,8 @@
                             </RadzenStack>
                             </RadzenStack>
                             <RadzenStack Gap="1.5rem">
-                            <RadzenButton Variant="Variant.Text" ButtonStyle="ButtonStyle.Info" Style="float:right" Text="Order" />
+                            <RadzenButton Variant="Variant.Text" ButtonStyle="ButtonStyle.Info" Style="float:right" Text="Order"
+                                  Click=@(arg=>OrderAction(item)) />
                             </RadzenStack>
                         </RadzenCard>                
                     }
@@ -57,7 +60,7 @@
                                 </RadzenStack>
                                 </RadzenStack>
                                 <RadzenStack Gap="1.5rem">
-                                <RadzenButton Variant="Variant.Text" ButtonStyle="ButtonStyle.Info" Style="float:right" Text="Order" />
+                                    <RadzenButton Click=@(arg=>OrderAction(item)) Variant="Variant.Text" ButtonStyle="ButtonStyle.Info" Style="float:right" Text="Order" />
                                 </RadzenStack>
                             </RadzenCard>                
                         }
@@ -77,33 +80,34 @@
                 <div style="padding:12px">
                     <table>
                         <tr>
-                            <th>Name</th>
-                            <th>Qty</th>
-                            <th>Size</th>
-                            <th>Price</th>
-                            <th>Amount</th>
-                            <th>Remove</th>
+                            <th><RadzenText Style="color:white">Name</RadzenText></th>
+                            <th><RadzenText Style="color:white">Qty</RadzenText></th>
+                            <th><RadzenText Style="color:white">Size</RadzenText></th>
+                            <th><RadzenText Style="color:white">Price</RadzenText></th>
+                            <th><RadzenText Style="color:white">Amount</RadzenText></th>
+                            <th><RadzenText Style="color:white">Remove</RadzenText></th>
                         </tr>
-                        <tr>
-                            <td><RadzenText>AAAAA</RadzenText></td>
-                            <td><RadzenText>6</RadzenText></td>
-                            <td><RadzenText>Small</RadzenText></td>
-                            <td><RadzenText>2.00</RadzenText></td>
-                            <td><RadzenText>12.00</RadzenText></td>
-                            <td> <RadzenButton  Variant="Variant.Flat" Shade="Shade.Lighter" Icon="highlight_off" ButtonStyle="ButtonStyle.Danger" /></td>
-                        </tr>
-                            <tr>
-                            <td><RadzenText>AAAAA</RadzenText></td>
-                            <td><RadzenText>6</RadzenText></td>
-                            <td><RadzenText>Small</RadzenText></td>
-                            <td><RadzenText>2.00</RadzenText></td>
-                            <td><RadzenText>12.00</RadzenText></td>
-                            <td> <RadzenButton  Variant="Variant.Flat" Shade="Shade.Lighter" Icon="highlight_off" ButtonStyle="ButtonStyle.Danger" /></td>
-                        </tr>
+                        @if(OrderModels is not null)
+                        {
+                            @foreach (var item in OrderModels)
+                            {
+                                <tr>
+                                    <td><RadzenText>@itemModels.Where(e=>e.Id==item.ItemId).Select(e=>e.Name).FirstOrDefault()</RadzenText></td>
+                                    <td><RadzenText>@item.Qty</RadzenText></td>
+                                    <td><RadzenText>@sizeModels.Where(e=>e.Id==item.SizeId).Select(e=>e.Name).FirstOrDefault()</RadzenText></td>
+                                    <td><RadzenText>@item.UnitPrice</RadzenText></td>
+                                    <td><RadzenText>@item.Total</RadzenText></td>
+                                    <td> <RadzenButton Variant="Variant.Flat" Shade="Shade.Lighter" Icon="highlight_off" ButtonStyle="ButtonStyle.Danger"
+                                          Click=@(args => RemoveItemAddToCart(item)) />
+                                    </td>
+                                </tr>
+                            }
+                        }
                     </table>
                 </div>
                 <div style="padding:12px ;float:right">
-                    <RadzenButton Variant="Variant.Flat" Shade="Shade.Lighter" Icon="add_shopping_cart" Text="PURCHASE" ButtonStyle="ButtonStyle.Primary" />
+                    <RadzenButton Variant="Variant.Flat" Shade="Shade.Lighter" Icon="add_shopping_cart" Text="PURCHASE" ButtonStyle="ButtonStyle.Primary"
+                              Click=@(args => Purchasing(OrderModels,(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Sucessfully...", Detail = "Your Order is completed", Duration = 4000 }))) />
                 </div>
             </div>
         </div>
@@ -112,12 +116,15 @@
 </div>
    
 @code {
+
     string? searchItem;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             await GetItemDetailsAsync();
+            await Sizes();
+            await Items();
         }
         StateHasChanged();
 
@@ -129,5 +136,16 @@
         {
             itemTemp = items.Where(e => e.Name.ToLower().Contains(value.ToLower())).ToList();
         }
+    }
+    async Task OrderAction(ItemResponse item)
+    {
+
+        await DialogService.OpenAsync<DialogCardPage>($"{item.Name}",
+               new Dictionary<string, object>() { { "ChildValue", item }, { "Token", token } },
+               new DialogOptions() { Width = "700px", Height = "512px", Resizable = true});
+    }
+    async Task RemoveItemAddToCart(ReceiptModel item)
+    {
+        OrderModels.Remove(item);
     }
 }

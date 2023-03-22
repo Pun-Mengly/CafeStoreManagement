@@ -1,14 +1,15 @@
 ﻿namespace CafeStoreWeb.Data
 {
-    public class OrderModel:BaseModel
+    public class ReceiptModel:BaseModel
     {
-        public Guid ReceiptId { get; set; }
         public Guid ItemId { get; set; }
+        public Guid ReceiptId { get; set; }
         public double UnitPrice { get; set; }
         public int Qty { get; set; }
         public double Total { get; set; }
+        public Guid OutletId { get; set; }
+        public Guid SizeId { get; set; }
         public string? Cashier { get; set; }
-        public string? OutletName { get; set; }
         public DateTime OrderDate { get; set; }
     }
 }

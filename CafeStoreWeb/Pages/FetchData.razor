@@ -16,25 +16,25 @@ else
 
     <div class="rz-border-info-darker" style="padding:12px">
         <RadzenDataGrid id="table-export" @ref=grid AllowGrouping="true" AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" PageSize="10" AllowPaging="true" AllowSorting="true"
-                    Data="@employees" TItem="OrderModel" ColumnWidth="160px" LogicalFilterOperator="LogicalFilterOperator.Or" Render="@OnRender"
+                    Data="@employees" TItem="ReceiptModel" ColumnWidth="160px" LogicalFilterOperator="LogicalFilterOperator.Or" Render="@OnRender"
                     HideGroupedColumn="true" GroupRowRender="OnGroupRowRender" GroupRowExpand="OnGroupRowExpand" GroupRowCollapse="OnGroupRowCollapse" Group="@OnGroup"
                     @bind-AllGroupsExpanded="@allGroupsExpanded">
             <Columns>
-                <RadzenDataGridColumn TItem="OrderModel" Property="ReceiptId" Filterable="false" Title="Receipt Id" Frozen="true" TextAlign="TextAlign.Center" />
-                <RadzenDataGridColumn TItem="OrderModel" Property="ItemId" Title="Item" />
-                <RadzenDataGridColumn TItem="OrderModel" Property="UnitPrice" Title="Unit Price">
+                <RadzenDataGridColumn TItem="ReceiptModel" Property="ReceiptId" Filterable="false" Title="Receipt Id" Frozen="true" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="ReceiptModel" Property="ItemId" Title="Item" />
+                <RadzenDataGridColumn TItem="ReceiptModel" Property="UnitPrice" Title="Unit Price">
                     <Template Context="detail">
                         @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", detail.UnitPrice)
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="OrderModel" Property="Qty" Title="Qty" />
-                <RadzenDataGridColumn TItem="OrderModel" Property="Total" Title="Total">
+                <RadzenDataGridColumn TItem="ReceiptModel" Property="Qty" Title="Qty" />
+                <RadzenDataGridColumn TItem="ReceiptModel" Property="Total" Title="Total">
                     <Template Context="detail">
                         @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", detail.Total)
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="OrderModel" Property="Cashier" Title="Cashier" />
-                <RadzenDataGridColumn TItem="OrderModel" Property="OrderDate" Title="Order Date" />
+                <RadzenDataGridColumn TItem="ReceiptModel" Property="Cashier" Title="Cashier" />
+                <RadzenDataGridColumn TItem="ReceiptModel" Property="OrderDate" Title="Order Date" />
             </Columns>
         </RadzenDataGrid>
     </div>
@@ -43,7 +43,7 @@ else
 
 @code {
     bool? allGroupsExpanded;
-    RadzenDataGrid<OrderModel>? grid;
+    RadzenDataGrid<ReceiptModel>? grid;
     List<string> receiptIds = new List<string>() 
     { 
         "46805048-22be-4dc0-9543-a3a64f38667b",
@@ -51,7 +51,7 @@ else
         "e92ae8ef-8606-4d1c-ae50-2d40ff8599e7"
     };
 
-    List<OrderModel>? employees=new List<OrderModel>();
+    List<ReceiptModel>? employees=new List<ReceiptModel>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,7 +59,7 @@ else
         LoadData();
     }
 
-    void OnRender(DataGridRenderEventArgs<OrderModel> args)
+    void OnRender(DataGridRenderEventArgs<ReceiptModel> args)
     {
         if(args.FirstRender)
         {
@@ -91,7 +91,7 @@ else
         Console.WriteLine($"Group row with key: {group.Data.Key} collapsed");
     }
 
-    void OnGroup(DataGridColumnGroupEventArgs<OrderModel> args)
+    void OnGroup(DataGridColumnGroupEventArgs<ReceiptModel> args)
     {
         Console.WriteLine($"DataGrid {(args.GroupDescriptor != null ? "grouped" : "ungrouped")} by {args.Column.GetGroupProperty()}");
     }
@@ -103,11 +103,10 @@ else
         {
             var qty = rnd.Next(1, 10);
             var price = rnd.NextDouble();
-            employees!.Add(new OrderModel()
+            employees!.Add(new ReceiptModel()
                 {
                     ReceiptId = Guid.Parse(receiptIds[rnd.Next(receiptIds.Count)]),
                     ItemId = Guid.NewGuid(),
-                    Cashier = "PUN MENGLY",
                     OrderDate = DateTime.Now,
                     Qty = qty,
                     UnitPrice = price,

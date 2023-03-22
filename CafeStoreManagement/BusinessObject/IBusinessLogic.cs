@@ -2,6 +2,7 @@
 using CafeStoreManagement.Features;
 using CafeStoreManagement.Features.ItemDetail.Response;
 using CafeStoreManagement.Models;
+using CafeStoreWeb.Data;
 using System.Drawing;
 
 //Strategy Pattern
@@ -33,6 +34,9 @@ public interface IBusinessLogic
 
     public void InitailizationData();
     public void GenerateReceiptReport();
+    public Task<double> GetItemPricing(Guid itemId, Guid sizeId, Guid OutletId,int qty);
+    public Task<IEnumerable<SizeModel>> GetItemSize(Guid itemId);
+    public Task<IEnumerable<OutletModel>> GetItemOutlet(Guid outletId);
 
     #region User Management
     //Task GenerateEmailConfirmationTokenAsync(ApplicationUser user);
@@ -41,6 +45,10 @@ public interface IBusinessLogic
     #endregion
 
     public Task<ItemModel> postItemV2(ItemModel model);
+
+
+    public Task PostOrderModel(List<ReceiptModel> item);
+    public Task<IEnumerable<ReceiptModel>> GetReceipts(Guid outletId,DateTime startDate,DateTime endDate,Guid receiptId);
 
 
 }

@@ -3,6 +3,8 @@ using CafeStoreManagement.ConfigurationModels;
 using CafeStoreManagement.Features;
 using CafeStoreManagement.Features.ItemDetail.Response;
 using CafeStoreManagement.Models;
+using CafeStoreWeb.Data;
+using System.Collections.Generic;
 
 public class BusinessLogic : IBusinessLogic
 {
@@ -675,6 +677,93 @@ public class BusinessLogic : IBusinessLogic
     public void GenerateReceiptReport()
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<double> GetItemPricing(Guid itemId, Guid sizeId, Guid outletId, int qty)
+    {
+        double price=await dataContext.ItemDetailModels.Where(e => e.CreatedBy == userId && e.ItemId == itemId &&
+                                                        e.SizeId == sizeId && e.OutletId == outletId)
+                                                        .Select(e=>e.Price).FirstOrDefaultAsync();
+        return price * qty;
+    }
+
+    public async Task<IEnumerable<SizeModel>> GetItemSize(Guid itemId)
+    {
+        var sizeModels=new List<SizeModel>();
+        var items=await dataContext.ItemDetailModels.Where(e=>e.ItemId==itemId &&
+                                            e.CreatedBy==userId).ToListAsync();
+        foreach (var item in items)
+        {
+            var itemWithSize=await dataContext.SizeModels.Where(e=>e.Id==item.SizeId).FirstOrDefaultAsync();
+            sizeModels.Add(itemWithSize!);
+        }
+        return sizeModels;
+    }
+
+
+    public async Task<IEnumerable<OutletModel>> GetItemOutlet(Guid itemId)
+    {
+        var outletsModels = new List<OutletModel>();
+        var items = await dataContext.ItemDetailModels.Where(e => e.ItemId == itemId &&
+                                            e.CreatedBy == userId).ToListAsync();
+        foreach (var item in items)
+        {
+            var itemWithSize = await dataContext.OutletModels.Where(e => e.Id == item.OutletId).FirstOrDefaultAsync();
+            outletsModels.Add(itemWithSize!);
+        }
+        return outletsModels;
+    }
+
+    public async Task PostOrderModel(List<ReceiptModel> items)
+    {
+        List<ReceiptModel> temps=new List<ReceiptModel>();
+        foreach (var item in items)
+        {
+            var obj = new ReceiptModel()
+            {
+                Id = Guid.NewGuid(),
+                Cashier = userId,
+                CreatedBy = userId,
+                CreatedDate = DateTime.Now,
+                Description = item.Description,
+                ItemId = item.ItemId,
+                OrderDate = DateTime.Now,
+                OutletId = item.OutletId,
+                Qty = item.Qty,
+                SizeId = item.SizeId,
+                Total = item.Total,
+                UnitPrice = item.UnitPrice,
+                ReceiptId = item.ReceiptId,
+            };
+            temps.Add(obj);           
+        }
+        await dataContext.ReceiptReportModels.AddRangeAsync(temps);
+        await dataContext.SaveChangesAsync();
+
+    }
+
+    public async Task<IEnumerable<ReceiptModel>> GetReceipts(Guid outletId, DateTime startDate, DateTime endDate, Guid receiptId)
+    {
+        if (receiptId == Guid.Empty && outletId == Guid.Empty)
+        {
+            return await dataContext.ReceiptReportModels.Where(e => e.CreatedBy == userId &&
+                                                                e.OrderDate >= startDate &&
+                                                                e.OrderDate < endDate).ToListAsync();
+        }
+        else if(outletId == Guid.Empty)
+        {
+            return await dataContext.ReceiptReportModels.Where(e => e.CreatedBy == userId &&
+                                                                e.ReceiptId == receiptId &&
+                                                                e.OrderDate >= startDate &&
+                                                                e.OrderDate < endDate).ToListAsync();
+        } 
+        else
+        {
+            return await dataContext.ReceiptReportModels.Where(e => e.CreatedBy == userId &&
+                                                                e.OutletId == outletId &&
+                                                                e.OrderDate >= startDate &&
+                                                                e.OrderDate < endDate).ToListAsync();
+        }
     }
 
     //public async Task GenerateEmailConfirmationTokenAsync(ApplicationUser user)
