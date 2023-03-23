@@ -25,6 +25,13 @@ namespace CafeStoreManagement.Controllers
         [Route("revenue-outlet")]
         public async Task<IEnumerable<RevenueOutletsDto>> GetRevenueOutlets() => await _logic.GetRevenueOutlets();
 
+
+        [HttpGet]
+        [Route("revenue-outlet-by-year")]
+        public async Task<IEnumerable<RevenueOutletByYear>> GetRevenueOutletByYears() => await _logic.GetRevenueOutletByYears();
+        [HttpGet]
+        [Route("items-pupular")]
+        public async Task<IEnumerable<PopularItemDto>> GetItemPopularByCategories() => await _logic.GetItemPopulars();
         [HttpPost]
         public async Task Post([FromBody] List<ReceiptModel> items) => await _logic.PostOrderModel(items);
     

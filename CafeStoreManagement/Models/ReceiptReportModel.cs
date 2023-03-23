@@ -9,6 +9,7 @@
         public double Amount { get; set; }
         public Guid OutletId { get; set; }
         public Guid SizeId { get; set; }
+        public Guid CategoryId { get; set; }
         public string? Cashier { get; set; }
         public DateTime OrderDate { get; set; }
     }

@@ -6,6 +6,7 @@ using CafeStoreManagement.Features.ItemDetail.Response;
 using CafeStoreManagement.Models;
 using CafeStoreWeb.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
 public class BusinessLogic : IBusinessLogic
@@ -723,6 +724,7 @@ public class BusinessLogic : IBusinessLogic
         List<ReceiptModel> temps=new List<ReceiptModel>();
         foreach (var item in items)
         {
+            var categoryId = await dataContext.ItemDetailModels.Where(e => e.CreatedBy==userId && e.ItemId == item.ItemId).Select(e => e.CategortId).FirstOrDefaultAsync();
             var obj = new ReceiptModel()
             {
                 Id = Guid.NewGuid(),
@@ -738,6 +740,7 @@ public class BusinessLogic : IBusinessLogic
                 Amount = item.Amount,
                 UnitPrice = item.UnitPrice,
                 ReceiptId = item.ReceiptId,
+                CategoryId= categoryId,
             };
             temps.Add(obj);           
         }
@@ -962,14 +965,14 @@ public class BusinessLogic : IBusinessLogic
         {
             List<RevenueOutletsDto> revenueOutletsDtos = new List<RevenueOutletsDto>();
             DateTime currentDateTime= DateTime.Now;
-            static DateTime FirstDayOfYear(DateTime y)
+            /*static DateTime FirstDayOfYear(DateTime y)
             {
                 return new DateTime(y.Year, 1, 1);
             }
             var preDateTime = FirstDayOfYear(currentDateTime);
+            */
             var receipts=await dataContext.ReceiptReportModels.Where(e=>e.CreatedBy==userId&&
-                                                        e.OrderDate>= preDateTime&&
-                                                        e.OrderDate<currentDateTime)
+                                                        e.OrderDate.Year== currentDateTime.Year)
                                                         .ToListAsync();
             var groupOutlets=receipts.GroupBy(e => e.OutletId).ToList();
             foreach (var groupOutlet in groupOutlets)
@@ -993,6 +996,175 @@ public class BusinessLogic : IBusinessLogic
             return revenueOutletsDtos;
         }
         catch(Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+
+    public async Task<IEnumerable<RevenueOutletByYear>> GetRevenueOutletByYears()
+    {
+        /*DateTime currentDateTime = DateTime.Now;
+        DateTime dateTime2019 =new  DateTime(2019,10,10);
+        DateTime dateTime2020 =new  DateTime(2020,10,10);
+        DateTime dateTime2021 =new  DateTime(2021,10,10);
+        DateTime dateTime2022 =new  DateTime(2022,10,10);
+
+        static DateTime FirstDayOfYear(DateTime y)
+        {
+            return new DateTime(y.Year, 1, 1);
+        }
+        static DateTime LastDayOfYear(DateTime d)
+        {
+            DateTime n = new DateTime(d.Year + 1, 1, 1);
+            return n.AddDays(-1);
+        }
+        //Now
+        DateTime startDateNow = FirstDayOfYear(currentDateTime);
+        DateTime endDateNow = LastDayOfYear(currentDateTime);
+        //2022
+        DateTime startDate2022 = FirstDayOfYear(dateTime2022);
+        DateTime endDate2022 = LastDayOfYear(dateTime2022);
+        //2021
+        DateTime startDate2021 = FirstDayOfYear(dateTime2021);
+        DateTime endDate2021 = LastDayOfYear(dateTime2021);
+        //2020
+        DateTime startDate2020 = FirstDayOfYear(dateTime2020);
+        DateTime endDate2020 = LastDayOfYear(dateTime2020);
+        //2019
+        DateTime startDate2019 = FirstDayOfYear(dateTime2019);
+        DateTime endDate2019 = LastDayOfYear(dateTime2019);
+        */
+        try
+        {
+            var revenueOutletByYear = new List<RevenueOutletByYear>();
+            //group by outlet
+            var data = await dataContext.ReceiptReportModels.Where(e => e.CreatedBy == userId).ToListAsync();
+            var groupDataByOutlet = data.GroupBy(e => e.OutletId).ToList();
+            foreach (var items in groupDataByOutlet)
+            {
+                //outlet 
+                var outletName = await dataContext.OutletModels.Where(e => e.Id == items.Key).Select(e => e.Name).FirstOrDefaultAsync();
+                foreach (var item in items)
+                {
+                    var obj = new RevenueOutletByYear()
+                    {
+                        Id = Guid.NewGuid(),
+                        Outlet = outletName,
+                        Year = item.OrderDate.Year,
+                        Revenue = items.Where(e => e.OrderDate.Year == item.OrderDate.Year).Sum(e => e.Amount)
+                    };
+                    revenueOutletByYear.Add(obj);
+                }
+            }
+            return revenueOutletByYear.DistinctBy(e => new {e.Year, e.Outlet}).ToList();
+        }
+        catch(Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+
+    public async Task<IEnumerable<PopularItemDto>> GetItemPopulars()
+    {
+        try
+        {
+
+            /*var itemPopularByCategorys = new List<ItemPopularByCategoryDto>();
+            var receipts = await dataContext.ReceiptReportModels.Where(e => e.CreatedBy == userId).ToListAsync();
+            //find item top 1
+            var maxOrderTop1= receipts.Max(e => e.Qty);
+            var itemMaxOrderTop1=receipts.Where(e=>e.Qty== maxOrderTop1).FirstOrDefault();
+            //remove top 1
+            receipts.Remove(itemMaxOrderTop1!);
+            //find item top 2
+            var maxOrderTop2 = receipts.Max(e => e.Qty);
+            var itemMaxOrderTop2 = receipts.Where(e => e.Qty == maxOrderTop2).FirstOrDefault();
+            //remove top 2
+            receipts.Remove(itemMaxOrderTop2!);
+            //find item top 3
+            var maxOrderTop3 = receipts.Max(e => e.Qty);
+            var itemMaxOrderTop3 = receipts.Where(e => e.Qty == maxOrderTop3).FirstOrDefault();
+            //remove top 3
+            receipts.Remove(itemMaxOrderTop3!);
+            //category
+            var categories = await dataContext.CategoryModels.Where(e => e.CreatedBy == userId).ToListAsync();
+            //item
+            var itemNameTop1=await dataContext.ItemModels.Where(e=>e.Id==itemMaxOrderTop1!.ItemId).Select(e=>e.Name).FirstOrDefaultAsync();
+            var itemNameTop2=await dataContext.ItemModels.Where(e=>e.Id==itemMaxOrderTop2!.ItemId).Select(e=>e.Name).FirstOrDefaultAsync();
+            var itemNameTop3=await dataContext.ItemModels.Where(e=>e.Id==itemMaxOrderTop3!.ItemId).Select(e=>e.Name).FirstOrDefaultAsync();
+            var objItemTop1 = new ItemDto()
+            {
+                Top=1,
+                Id=Guid.NewGuid(),
+                Decription="Generate from api",
+                ItemId=itemMaxOrderTop1!.Id,
+                ItemName= itemNameTop1,
+            };
+            var objItemTop2 = new ItemDto()
+            {
+                Top = 2,
+                Id = Guid.NewGuid(),
+                Decription = "Generate from api",
+                ItemId = itemMaxOrderTop2!.Id,
+                ItemName = itemNameTop2,
+            };
+            var objItemTop3 = new ItemDto()
+            {
+                Top = 3,
+                Id = Guid.NewGuid(),
+                Decription = "Generate from api",
+                ItemId = itemMaxOrderTop3!.Id,
+                ItemName = itemNameTop3,
+            };
+
+
+            foreach (var category in categories)
+            {
+                var itemMatchCategory=await dataContext.ItemDetailModels.Where(e=>e.CreatedBy==userId &&
+                                                                            e.ItemId==objItemTop1.ItemId &&
+                                                                            e.CategortId==category.Id)
+                                                                            .Select(e=>e.CategortId).FirstOrDefaultAsync();
+                var categoryName = categories.Where(e=>e.CreatedBy==userId && e.Id== itemMatchCategory).Select(e=>e.Name).FirstOrDefault();
+                var obj = new ItemPopularByCategoryDto()
+                {
+                    Id = Guid.NewGuid(),
+                    CategoryId = itemMatchCategory,
+                    CategoryName = categoryName,
+                    Description = category.Description,
+                    Items= objItemTop1
+                };
+                itemPopularByCategorys.Add(obj);
+            }
+            return itemPopularByCategorys.DistinctBy(e=>e.CategoryId).ToList();*/
+            var popularItems= new List<PopularItemDto>();
+
+            var receipts = await dataContext.ReceiptReportModels.Where(e=>e.CreatedBy==userId).ToListAsync();
+            //group ItemId
+            var groupByItemId=receipts.GroupBy(e => e.ItemId).ToList();
+            foreach (var item in groupByItemId)
+            {
+                foreach (var itemSub in item)
+                {
+                    //Items
+                    var itemdata=await dataContext.ItemModels.Where(e=>e.CreatedBy==userId&&e.Id==itemSub.ItemId).FirstOrDefaultAsync();
+                    var obj = new PopularItemDto()
+                    {
+                        Id=Guid.NewGuid(),
+                        ItemId=itemSub.ItemId,
+                        Qty= item.Sum(e=>e.Qty),
+                        ItemName= itemdata!.Name,
+                        Photo=itemdata!.Photo,
+                    };
+                    popularItems.Add(obj);
+                }
+            }
+            //find top 10 items
+            var top10Items= popularItems.OrderByDescending(e=>e.Qty).DistinctBy(e=>e.ItemId).Take(3).ToList();
+            return top10Items;
+
+
+        }
+        catch (Exception ex)
         {
             throw new Exception(ex.Message);
         }

@@ -19,6 +19,7 @@
             <RadzenText Text="Outlet"></RadzenText>
             <RadzenDropDown TValue="string" Data=@OutletModels.Select(e=>e.Name) Style="width: 100%; max-width: 400px;"
                             Change=@(args => OnChangeOutlet(args)) 
+                            Value="@OutletNameFromDashboard"
                             Placeholder="Select Outlet"/>
         </div>
         <div style="padding-right:12px;">
@@ -93,12 +94,23 @@ else
     string receiptID;
     RadzenDataGrid<ReceiptDto>? grid;
     Guid outletId;
+    string? OutletNameFromDashboard;
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string OutletIdFromDashboard { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             await Outlets();
+            if (OutletIdFromDashboard is not null)
+            {
+                OutletNameFromDashboard = OutletModels.Where(e => e.Id == Guid.Parse(OutletIdFromDashboard)).Select(e => e.Name).FirstOrDefault();
+
+            }
+           
+
         }
         StateHasChanged();
     }

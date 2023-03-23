@@ -7,16 +7,18 @@
 @inject NotificationService NotificationService
 
 @using System.Globalization
+@using Microsoft.AspNetCore.WebUtilities;
 <div style="padding-right:12px;">
     <RadzenCard Class=" rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="margin: 0 calc(-1 * var(--rz-card-padding));margin-top:unset; padding: 2rem;">
-        <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light"><strong>Item Popular </strong></RadzenText>
+        <RadzenText TextStyle="TextStyle.H6" Class="rz-color-danger-light"><strong>Item Popular </strong></RadzenText>
         <div class="row">
-            @foreach (var item in ListItemPopulars)
+            @foreach (var item in PopularItems)
             {
                 <div class="col-md-3 col-xl-3">
-                    <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light d-flex mt-3 mb-0">@item.ToUpper()</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-danger-light"><b>@item</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-danger-light"><b>@item</b></RadzenText>
+                    <RadzenImage Path=@item.Photo class="rz-gravatar" Style="width:150px;height:150px" />
+                    <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light d-flex mt-3 mb-0">@item.ItemName</RadzenText>
+                  @*  <RadzenText TextStyle="TextStyle.Body1" class="rz-color-danger-light"><b>@item.Name</b></RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-danger-light"><b>@item.Name</b></RadzenText>*@
                 </div>
             }
         </div>
@@ -39,10 +41,10 @@
             <div class="row my-5">
                 <div class="col-sm-12 col-lg-8">
                     <RadzenChart ColorScheme="@colorScheme">
-                        @for (var year = 2013; year <= 2020; year++)
+                        @for (var year = 2019; year <= 2023; year++)
                         {
-                            var currentYearRevenue = revenue.Where(r => r.Year == year).ToList();
-                            <RadzenColumnSeries Data="@currentYearRevenue" CategoryProperty="Quarter" Title="@year.ToString()" ValueProperty="Revenue" />
+                            var currentYearRevenue = RevenueOutletByYears.Where(r => r.Year == year).ToList();
+                            <RadzenColumnSeries Data="@currentYearRevenue" CategoryProperty="Outlet" Title="@year.ToString()" ValueProperty="Revenue" />
                         }
                         <RadzenColumnOptions Margin="0" />
                         <RadzenValueAxis Formatter="@FormatAsUSD" />
@@ -50,7 +52,7 @@
                 </div>
                 <div class="col-sm-12 col-lg-4">
                     <RadzenChart ColorScheme="@colorScheme">
-                        <RadzenPieSeries Data="@revenue.Where(r => r.Year == 2020)" Title="Revenue" CategoryProperty="Quarter" ValueProperty="Revenue" />
+                        <RadzenPieSeries Data="@RevenueOutletByYears.Where(r => r.Year == 2023)" Title="Revenue" CategoryProperty="Outlet" ValueProperty="Revenue" />
                     </RadzenChart>
                 </div>
             </div>
@@ -60,45 +62,32 @@
 </div>
 @code {
     ColorScheme colorScheme = ColorScheme.Palette;
-
-    class DataItem
-    {
-        public int Year { get; set; }
-        public string Quarter { get; set; }
-        public double Revenue { get; set; }
-    }
-
     string FormatAsUSD(object value)
     {
         return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("en-US"));
     }
-
-    IList<DataItem> revenue = new List<DataItem>();
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await RevenueOutlets();
-            var random = new Random();
-
-            for (var year = 2013; year <= 2020; year++)
+            Task.Run(()=>
             {
-                foreach (var item in ListOutlets)
-                {
-                    revenue.Add(new DataItem
-                        {
-                            Year = year,
-                            Quarter = item!.OutletName,
-                            Revenue = random.NextDouble() * 200000
-                        });
-                }
-            }
+                GetRevenueOutlets();
+                GetRevenueOutletByYears();
+                GetCategories();
+                GetItemPopulars();
+            });
         }
         StateHasChanged();
     }
     async Task SeeMore(Guid outletId)
     {
-        Navigation.NavigateTo("/report/receipt");
+        var queryStrDict = new Dictionary<string, string>
+            {
+                ["OutletIdFromDashboard"] = outletId.ToString()
+            };
+        Navigation.NavigateTo(
+            QueryHelpers.AddQueryString("/report/receipt", queryStrDict!)
+        );
     }
 }

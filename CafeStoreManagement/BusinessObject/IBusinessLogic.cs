@@ -52,6 +52,8 @@ public interface IBusinessLogic
     public Task<IEnumerable<ReceiptDto>> GetReceipts(Guid outletId,DateTime startDate,DateTime endDate,Guid receiptId);
 
     public Task<IEnumerable<RevenueOutletsDto>> GetRevenueOutlets();
+    public Task<IEnumerable<RevenueOutletByYear>> GetRevenueOutletByYears();
+    public Task<IEnumerable<PopularItemDto>> GetItemPopulars();
 
 
 }
