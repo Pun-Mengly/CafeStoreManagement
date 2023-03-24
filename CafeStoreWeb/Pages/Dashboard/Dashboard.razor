@@ -41,19 +41,25 @@
             <div class="container">
                 <div class="row my-5">
                     <div class="col-sm-12 col-lg-8">
-                        <RadzenChart ColorScheme="@colorScheme"> 
+                        <RadzenChart ColorScheme="@colorScheme">
+                        @if (RevenueOutletByYears.Count>0)
+                        {
                             @for (var year = 2019; year <= 2023; year++)
                             {
                                 var currentYearRevenue = RevenueOutletByYears.Where(r => r.Year == year).ToList();
                                 <RadzenColumnSeries Data="@currentYearRevenue" CategoryProperty="Outlet" Title="@year.ToString()" ValueProperty="Revenue" />
                             }
-                            <RadzenColumnOptions Margin="0" />
+                        }
+                        <RadzenColumnOptions Margin="0" />
                             <RadzenValueAxis Formatter="@FormatAsUSD" />
                         </RadzenChart>
                     </div>
                     <div class="col-sm-12 col-lg-4">
                         <RadzenChart ColorScheme="@colorScheme">
+                        @if (RevenueOutletByYears.Count>0)
+                        {
                             <RadzenPieSeries Data="@RevenueOutletByYears.Where(r => r.Year == 2023)" Title="Revenue" CategoryProperty="Outlet" ValueProperty="Revenue" />
+                        }
                         </RadzenChart>
                     </div>
                 </div>
