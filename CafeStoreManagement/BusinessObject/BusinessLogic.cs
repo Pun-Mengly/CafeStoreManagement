@@ -828,7 +828,9 @@ public class BusinessLogic : IBusinessLogic
                     Amount = result.Amount,
                     ItemName = itemName,
                     SizeName = sizeName,
-                    OutletName = outletName
+                    OutletName = outletName,
+                    Total = results.Where(e => e.ReceiptId == result.ReceiptId).Sum(e => e.Amount)
+
 
                 };
                 receipts.Add(obj);
@@ -869,8 +871,10 @@ public class BusinessLogic : IBusinessLogic
                     Amount = result.Amount,
                     ItemName = itemName,
                     SizeName = sizeName,
-                    OutletName = outletName
-                    
+                    OutletName = outletName,
+                    Total = results.Where(e => e.ReceiptId == result.ReceiptId).Sum(e => e.Amount)
+
+
                 };
                 receipts.Add(obj);
             }
@@ -910,7 +914,9 @@ public class BusinessLogic : IBusinessLogic
                     Amount = result.Amount,
                     ItemName = itemName,
                     SizeName = sizeName,
-                    OutletName = outletName
+                    OutletName = outletName,
+                    Total = results.Where(e => e.ReceiptId == result.ReceiptId).Sum(e => e.Amount)
+
 
                 };
                 receipts.Add(obj);
@@ -1159,7 +1165,7 @@ public class BusinessLogic : IBusinessLogic
                 }
             }
             //find top 10 items
-            var top10Items= popularItems.OrderByDescending(e=>e.Qty).DistinctBy(e=>e.ItemId).Take(3).ToList();
+            var top10Items= popularItems.OrderByDescending(e=>e.Qty).DistinctBy(e=>e.ItemId).Take(4).ToList();
             return top10Items;
 
 

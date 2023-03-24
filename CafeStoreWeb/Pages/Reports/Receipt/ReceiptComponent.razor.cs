@@ -3,9 +3,11 @@ using CafeStoreManagement.Features;
 using CafeStoreManagement.Models;
 using CafeStoreWeb.Data;
 using CafeStoreWeb.Pages.Outlet;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.JSInterop;
+using OfficeOpenXml.Style;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,6 +67,56 @@ namespace CafeStoreWeb.Pages.Reports.Receipt
                 Id = Guid.Empty,
                 Name = "All Outlets"
             });
+        }
+        private async void ExportExcelEPPlus()
+        {
+            List<string> headers = new List<string>() { "Receipt Id", "Item", "Size","Qty","Price","Amount","Total","Cashier","Outlet","OrderDate" };
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            // Create Excel Workbook with data then export
+            using (var excelPackage = new ExcelPackage())
+            {
+                // Create Excel Workbook
+                var excelWorksheet = excelPackage.Workbook.Worksheets.Add("Receipt");
+                // Header
+                foreach (var item in headers)
+                {
+                    int index = headers.IndexOf(item)+1;
+                    excelWorksheet.Cells[1, index].Value = item;
+                    excelWorksheet.Cells[1, index].Style.Font.Size = 12;
+                    excelWorksheet.Cells[1, index].Style.Font.Bold = true;
+                }
+
+                // Record
+                foreach (var item in ReceiptModels)
+                {
+                    int index = 0;
+                    if (ReceiptModels.IndexOf(item) == 0)
+                    {
+                        index = ReceiptModels.IndexOf(item) + 2;
+                    }
+                    else
+                    {
+                        index = ReceiptModels.IndexOf(item) + 1;
+                    }
+                    
+                    excelWorksheet.Cells[index, 1].Value = item.ReceiptId;
+                    excelWorksheet.Cells[index, 2].Value = item.ItemName;
+                    excelWorksheet.Cells[index, 3].Value = item.SizeName;
+                    excelWorksheet.Cells[index, 4].Value = item.Qty;
+                    excelWorksheet.Cells[index, 5].Value = item.Price;
+                    excelWorksheet.Cells[index, 6].Value = item.Amount;
+                    excelWorksheet.Cells[index, 7].Value = item.Total;
+                    excelWorksheet.Cells[index, 8].Value = item.CashierName;
+                    excelWorksheet.Cells[index, 9].Value = item.OutletName;
+                    excelWorksheet.Cells[index, 10].Value = item.OrderDate;
+
+                    excelWorksheet.Cells[index, 10].Style.Numberformat.Format = "yyyy-mm-dd,hh:mm:ss";
+
+                }
+                // Export data
+                await ExportDataFile.ExportToFileAsync(JSRunTime, excelPackage, $"Receipt Report{DateTime.Today}");
+            }
+
         }
     }
 }

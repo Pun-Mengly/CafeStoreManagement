@@ -12,12 +12,10 @@ namespace CafeStoreWeb.Pages.Dashboard;
 
 public partial class Dashboard
 {
-    public string Name { get; set; } = "Mengly";
     public List<RevenueOutletsDto> ListOutlets { get; set; } = new List<RevenueOutletsDto>();
     public List<CategoryModel> CategoryModels { get; set; } = new List<CategoryModel>();
     public List<PopularItemDto> PopularItems { get; set; } = new List<PopularItemDto>();
     public List<RevenueOutletByYear> RevenueOutletByYears { get; set; } = new List<RevenueOutletByYear>();
-    public List<string> ListItemPopulars { get; set; }= new List<string>() {"Food","Baverage","Set Item", "Souvenir" };
 
     public Dashboard()
     {

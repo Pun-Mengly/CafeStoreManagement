@@ -8,58 +8,60 @@
 
 @using System.Globalization
 @using Microsoft.AspNetCore.WebUtilities;
-<div style="padding-right:12px;">
-    <RadzenCard Class=" rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="margin: 0 calc(-1 * var(--rz-card-padding));margin-top:unset; padding: 2rem;">
-        <RadzenText TextStyle="TextStyle.H6" Class="rz-color-danger-light"><strong>Item Popular </strong></RadzenText>
-        <div class="row">
-            @foreach (var item in PopularItems)
+
+    <div style="padding-right:12px;">
+        <RadzenCard Class=" rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="margin: 0 calc(-1 * var(--rz-card-padding));margin-top:unset; padding: 2rem;">
+            <RadzenText TextStyle="TextStyle.H6" Class="rz-color-danger-light"><strong>Item Popular </strong></RadzenText>
+            <div class="row d-flex justify-content-around">
+                @foreach (var item in PopularItems)
+                {
+                    <div class="col-md-3 col-xl-3">
+                        <RadzenImage Path=@item.Photo class="rz-gravatar" Style="width:120px;height:120px" />
+                        <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light d-flex mt-3 mb-0">@item.ItemName</RadzenText>
+                        @*  <RadzenText TextStyle="TextStyle.Body1" class="rz-color-danger-light"><b>@item.Name</b></RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1" class="rz-color-danger-light"><b>@item.Name</b></RadzenText>*@
+                    </div>
+                }
+            </div>
+        </RadzenCard>
+        <div class="my-2 d-flex justify-content-around">
+            @foreach (var outlet in ListOutlets)
             {
-                <div class="col-md-3 col-xl-3">
-                    <RadzenImage Path=@item.Photo class="rz-gravatar" Style="width:150px;height:150px" />
-                    <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light d-flex mt-3 mb-0">@item.ItemName</RadzenText>
-                  @*  <RadzenText TextStyle="TextStyle.Body1" class="rz-color-danger-light"><b>@item.Name</b></RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1" class="rz-color-danger-light"><b>@item.Name</b></RadzenText>*@
-                </div>
+                <RadzenCard Class="col-md-3 col-xl-3 col-lg-3  rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="padding: 2rem; width:24%">
+                    <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light"><strong>@outlet.OutletName</strong></RadzenText>
+                    <RadzenText TextStyle="TextStyle.H5" Class="rz-color-danger-light"><b>@String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", outlet.RevenuePerYear)</b></RadzenText>
+                    <div class="text-end">
+                        <RadzenButton Class="rz-color-primary-light" Variant="Variant.Text" Text="See more"
+                              Click=@(args => SeeMore(outlet.OutletId)) />
+                    </div>
+                </RadzenCard>
             }
         </div>
-    </RadzenCard>
-    <div class="my-3 d-flex justify-content-around">
-        @foreach(var outlet in ListOutlets)
-        {
-            <RadzenCard Class="col-md-3 col-xl-3 col-lg-3  rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="padding: 2rem;width: 24%">
-                <RadzenText TextStyle="TextStyle.H6" Class="rz-color-primary-light"><strong>@outlet.OutletName</strong></RadzenText>
-                <RadzenText TextStyle="TextStyle.H5" Class="rz-color-danger-light"><b>@String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", outlet.RevenuePerYear)</b></RadzenText>
-                <div class="text-end">
-                    <RadzenButton Class="rz-color-primary-light" Variant="Variant.Text" Text="See more"
-                              Click=@(args => SeeMore(outlet.OutletId)) />
+        <RadzenCard Class="my-2 rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="margin: 0 calc(-1 * var(--rz-card-padding)); padding: 2rem;">
+            <div class="container">
+                <div class="row my-5">
+                    <div class="col-sm-12 col-lg-8">
+                        <RadzenChart ColorScheme="@colorScheme"> 
+                            @for (var year = 2019; year <= 2023; year++)
+                            {
+                                var currentYearRevenue = RevenueOutletByYears.Where(r => r.Year == year).ToList();
+                                <RadzenColumnSeries Data="@currentYearRevenue" CategoryProperty="Outlet" Title="@year.ToString()" ValueProperty="Revenue" />
+                            }
+                            <RadzenColumnOptions Margin="0" />
+                            <RadzenValueAxis Formatter="@FormatAsUSD" />
+                        </RadzenChart>
+                    </div>
+                    <div class="col-sm-12 col-lg-4">
+                        <RadzenChart ColorScheme="@colorScheme">
+                            <RadzenPieSeries Data="@RevenueOutletByYears.Where(r => r.Year == 2023)" Title="Revenue" CategoryProperty="Outlet" ValueProperty="Revenue" />
+                        </RadzenChart>
+                    </div>
                 </div>
-            </RadzenCard>
-        }
-    </div>
-    <RadzenCard Class="my-3 rz-background-color-primary-lighter rz-shadow-0 rz-border-radius-0" style="margin: 0 calc(-1 * var(--rz-card-padding)); padding: 2rem;">
-        <div class="container">
-            <div class="row my-5">
-                <div class="col-sm-12 col-lg-8">
-                    <RadzenChart ColorScheme="@colorScheme">
-                        @for (var year = 2019; year <= 2023; year++)
-                        {
-                            var currentYearRevenue = RevenueOutletByYears.Where(r => r.Year == year).ToList();
-                            <RadzenColumnSeries Data="@currentYearRevenue" CategoryProperty="Outlet" Title="@year.ToString()" ValueProperty="Revenue" />
-                        }
-                        <RadzenColumnOptions Margin="0" />
-                        <RadzenValueAxis Formatter="@FormatAsUSD" />
-                    </RadzenChart>
-                </div>
-                <div class="col-sm-12 col-lg-4">
-                    <RadzenChart ColorScheme="@colorScheme">
-                        <RadzenPieSeries Data="@RevenueOutletByYears.Where(r => r.Year == 2023)" Title="Revenue" CategoryProperty="Outlet" ValueProperty="Revenue" />
-                    </RadzenChart>
-                </div>
+
             </div>
-            
-        </div>
-    </RadzenCard>
-</div>
+        </RadzenCard>
+    </div>
+
 @code {
     ColorScheme colorScheme = ColorScheme.Palette;
     string FormatAsUSD(object value)

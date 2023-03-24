@@ -8,7 +8,9 @@
 @inject NavigationManager Navigation;
 @inject DialogService DialogService
 @inject NotificationService NotificationService
-
+@using OfficeOpenXml;
+@using System.IO;
+@using OfficeOpenXml.Style;
 <RadzenText Text="Receipt Report" id="text-header"
             TextStyle="TextStyle.H2"
             Style="background-color:indigo; color:white;padding:12px"></RadzenText>
@@ -34,9 +36,13 @@
             <RadzenText Text="Receipt Id"></RadzenText>
             <RadzenTextBox @bind-Value=@(receiptID) Style="margin-top:5%" />
         </div>
-        <div>
+        <div style="margin-right: 5px;">
             <RadzenButton Text="Filter" Icon="filter_alt" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Style="margin-top:34%"
                           Click=@(args => Filter()) />
+        </div>
+        <div>
+            <RadzenButton Text="Excel" Icon="file_download" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Style="margin-top:34%"
+                          Click=@(args => ExportExcelEPPlus()) />
         </div>
     </div>
     <div></div>
