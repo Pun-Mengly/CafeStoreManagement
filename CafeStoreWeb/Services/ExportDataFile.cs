@@ -1,37 +1,9 @@
 ﻿using Microsoft.JSInterop;
 using OfficeOpenXml;
-using OfficeOpenXml.Style;
-using Microsoft.JSInterop;
-using System;
-using ClosedXML.Excel;
-using System.Data;
 
-namespace CafeStoreWeb.Data
+namespace CafeStoreWeb.Services
 {
-    public class MyData
-    {
-        public int Id { get; set; }
-        public string? Name { get; set; }
-        public MyData()
-        {
-            //GetData();
-        }
-        static public List<MyData> GetData()
-        {
-            var data=new List<MyData>();
-            for (int i = 1; i <= 10; i++)
-            {
-                var obj = new MyData()
-                {
-                    Id=i,
-                    Name=$"Name {i}"
-                };
-                data.Add(obj);
-            }
-            return data;
-        }
-        
-    }
+   
     public class ExportDataFile
     {
         /// <summary>
@@ -59,6 +31,6 @@ namespace CafeStoreWeb.Data
                 Convert.ToBase64String(fileByteArray)
             );
         }
-        
+
     }
 }

@@ -1,7 +1,6 @@
 ﻿using CafeStoreManagement.DTOs;
 using CafeStoreManagement.Features;
 using CafeStoreManagement.Models;
-using CafeStoreWeb.Data;
 using CafeStoreWeb.Pages.Outlet;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -15,7 +14,7 @@ using System.Linq.Dynamic.Core.Tokenizer;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading.Tasks;
-
+using CafeStoreWeb.Services;
 
 namespace CafeStoreWeb.Pages.Reports.Receipt
 {
@@ -109,12 +108,12 @@ namespace CafeStoreWeb.Pages.Reports.Receipt
                     excelWorksheet.Cells[index, 8].Value = item.CashierName;
                     excelWorksheet.Cells[index, 9].Value = item.OutletName;
                     excelWorksheet.Cells[index, 10].Value = item.OrderDate;
-
+                    //Format Date
                     excelWorksheet.Cells[index, 10].Style.Numberformat.Format = "yyyy-mm-dd,hh:mm:ss";
 
                 }
                 // Export data
-                await ExportDataFile.ExportToFileAsync(JSRunTime, excelPackage, $"Receipt Report{DateTime.Today}");
+                await ExportDataFile.ExportToFileAsync(JSRunTime, excelPackage, $"Receipt Report {DateTime.Now}");
             }
 
         }
