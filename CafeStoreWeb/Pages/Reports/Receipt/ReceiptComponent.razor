@@ -49,14 +49,11 @@
 </div>
 @if (ReceiptModels.Count==0)
 {
-    @*<span class="spinner-border spinner-border-md d-flex justify-content-center centered" role="status" aria-hidden="true"></span>*@
     <RadzenText Style="padding:12px" TextStyle="TextStyle.H6" TextAlign="TextAlign.Start">No Data Available</RadzenText>
 
 }
 else
 {
-    @*<RadzenButton Text="Export XLS" Icon="grid_on" Click="@(args => Export())" class="mb-4 me-2" />*@
-
     <div class="rz-border-info-darker" style="padding:12px;margin-top:12px">
         <RadzenDataGrid id="table-export" @ref=grid AllowGrouping="true" AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" PageSize="10" AllowPaging="true" AllowSorting="true"
                     Data="@ReceiptModels" TItem="ReceiptDto" ColumnWidth="160px" LogicalFilterOperator="LogicalFilterOperator.Or" Render="@OnRender"

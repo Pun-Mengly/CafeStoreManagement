@@ -791,7 +791,7 @@ public class BusinessLogic : IBusinessLogic
                 };
                 receipts.Add(obj);
             }
-            return receipts;
+            return receipts.OrderBy(e => e.ReceiptId).ToList();
         }
         else if (receiptId != Guid.Empty && outletId != Guid.Empty)
         {
@@ -835,7 +835,7 @@ public class BusinessLogic : IBusinessLogic
                 };
                 receipts.Add(obj);
             }
-            return receipts;
+            return receipts.OrderBy(e => e.ReceiptId).ToList();
         }
         else if(outletId == Guid.Empty)
         {
@@ -878,7 +878,7 @@ public class BusinessLogic : IBusinessLogic
                 };
                 receipts.Add(obj);
             }
-            return receipts;
+            return receipts.OrderBy(e=>e.ReceiptId).ToList();
         }
         else if (receiptId == Guid.Empty)
         {
@@ -921,7 +921,7 @@ public class BusinessLogic : IBusinessLogic
                 };
                 receipts.Add(obj);
             }
-            return receipts;
+            return receipts.OrderBy(e => e.ReceiptId).ToList();
         }
         else
         {
@@ -961,7 +961,7 @@ public class BusinessLogic : IBusinessLogic
                 };
                 receipts.Add(obj);
             }
-            return receipts;
+            return receipts.OrderBy(e => e.ReceiptId).ToList();
         }
     }
 

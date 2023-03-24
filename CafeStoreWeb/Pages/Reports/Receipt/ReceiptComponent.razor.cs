@@ -79,23 +79,24 @@ namespace CafeStoreWeb.Pages.Reports.Receipt
                 // Header
                 foreach (var item in headers)
                 {
-                    int index = headers.IndexOf(item)+1;
-                    excelWorksheet.Cells[1, index].Value = item;
-                    excelWorksheet.Cells[1, index].Style.Font.Size = 12;
-                    excelWorksheet.Cells[1, index].Style.Font.Bold = true;
+                    int indexHeader = headers.IndexOf(item)+1;
+                    excelWorksheet.Cells[1, indexHeader].Value = item;
+                    excelWorksheet.Cells[1, indexHeader].Style.Font.Size = 12;
+                    excelWorksheet.Cells[1, indexHeader].Style.Font.Bold = true;
                 }
-
+                var oldObj = new ReceiptDto();
                 // Record
+                int index = 0;
                 foreach (var item in ReceiptModels)
                 {
-                    int index = 0;
+                    
                     if (ReceiptModels.IndexOf(item) == 0)
                     {
                         index = ReceiptModels.IndexOf(item) + 2;
                     }
                     else
                     {
-                        index = ReceiptModels.IndexOf(item) + 1;
+                        index = index + 1;
                     }
                     
                     excelWorksheet.Cells[index, 1].Value = item.ReceiptId;
@@ -110,6 +111,35 @@ namespace CafeStoreWeb.Pages.Reports.Receipt
                     excelWorksheet.Cells[index, 10].Value = item.OrderDate;
                     //Format Date
                     excelWorksheet.Cells[index, 10].Style.Numberformat.Format = "yyyy-mm-dd,hh:mm:ss";
+                    //Merge Receipts
+                    var test1 = oldObj;
+                    var test2 = item;
+                    if (oldObj.ReceiptId== item.ReceiptId)
+                    {
+                        excelWorksheet.Cells[index -1 , 1, index, 1].Merge = true;
+                        excelWorksheet.Cells[index -1 , 1, index, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center; // Alignment is center
+                        excelWorksheet.Cells[index -1 , 1, index, 1].Style.VerticalAlignment = ExcelVerticalAlignment.Center; // Alignment is center
+
+                        excelWorksheet.Cells[index -1 , 7, index, 7].Merge = true;
+                        excelWorksheet.Cells[index -1 , 7, index, 7].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center; // Alignment is center
+                        excelWorksheet.Cells[index -1, 7, index, 7].Style.VerticalAlignment = ExcelVerticalAlignment.Center; // Alignment is center
+
+                        excelWorksheet.Cells[index -1, 8, index, 8].Merge = true;
+                        excelWorksheet.Cells[index -1, 8, index, 8].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center; // Alignment is center
+                        excelWorksheet.Cells[index -1, 8, index, 8].Style.VerticalAlignment = ExcelVerticalAlignment.Center; // Alignment is center
+
+                        excelWorksheet.Cells[index -1, 9, index, 9].Merge = true;
+                        excelWorksheet.Cells[index -1, 9, index, 9].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        excelWorksheet.Cells[index -1, 9, index, 9].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+
+                        excelWorksheet.Cells[index -1, 10, index, 10].Merge = true;
+                        excelWorksheet.Cells[index -1, 10, index, 10].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center; // Alignment is center
+                        excelWorksheet.Cells[index -1, 10, index, 10].Style.VerticalAlignment = ExcelVerticalAlignment.Center; // Alignment is center
+                    }
+                    oldObj = new ReceiptDto()
+                    {
+                        ReceiptId = item.ReceiptId,
+                    };
 
                 }
                 // Export data
