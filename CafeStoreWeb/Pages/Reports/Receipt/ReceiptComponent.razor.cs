@@ -67,7 +67,7 @@ namespace CafeStoreWeb.Pages.Reports.Receipt
                 Name = "All Outlets"
             });
         }
-        private async void ExportExcelEPPlus()
+        private async Task ExportExcelEPPlus()
         {
             List<string> headers = new List<string>() { "Receipt Id", "Item", "Size","Qty","Price","Amount","Total","Cashier","Outlet","OrderDate" };
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
